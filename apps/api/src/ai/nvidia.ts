@@ -36,14 +36,20 @@ const usageOf = (u: { inputTokens?: number; outputTokens?: number } | undefined)
   completionTokens: u?.outputTokens ?? null,
 })
 
+/**
+ * Nemotron models reason ("think") before answering by default, which costs tens of seconds of hidden
+ * tokens. One-shot extraction and wording don't need it; tool-calling agents keep it.
+ */
+const noThinking = { nvidia: { chat_template_kwargs: { enable_thinking: false } } }
+
 export async function chatText(model: LanguageModel, prompt: string, system?: string) {
-  const r = await generateText({ model, system, prompt, temperature: 0, ...common() })
+  const r = await generateText({ model, system, prompt, temperature: 0, providerOptions: noThinking, ...common() })
   return r.text
 }
 
 /** Structured output validated against a zod schema. */
 export async function chatObject<S extends z.ZodType>(model: LanguageModel, schema: S, prompt: string, system: string) {
-  const r = await generateText({ model, system, prompt, temperature: 0.2, output: Output.object({ schema }), ...common() })
+  const r = await generateText({ model, system, prompt, temperature: 0.2, output: Output.object({ schema }), providerOptions: noThinking, ...common() })
   return { object: r.output as z.infer<S>, usage: usageOf(r.totalUsage ?? r.usage) }
 }
 
