@@ -13,11 +13,11 @@ const schema = z.object({
 
   NVIDIA_API_KEY: z.string().default(''),
   NVIDIA_BASE_URL: z.string().default('https://integrate.api.nvidia.com'),
-  NVIDIA_AGENT_MODEL: z.string().default('nvidia/nemotron-3-super-120b-a12b'),
+  NVIDIA_AGENT_MODEL: z.string().default('nvidia/nemotron-3-ultra-550b-a55b'),
   NVIDIA_FAST_MODEL: z.string().default('nvidia/nemotron-3.5-lightning-30b-a3b'),
   NVIDIA_MAX_TOKENS: z.coerce.number().int().default(2048),
-  NVIDIA_EMBEDDING_MODEL: z.string().default('nvidia/embed-qa-4'),
-  EMBEDDING_DIMENSIONS: z.coerce.number().int().default(1024),
+  NVIDIA_EMBEDDING_MODEL: z.string().default('nvidia/nemotron-3-embed-1b'),
+  EMBEDDING_DIMENSIONS: z.coerce.number().int().default(2048),
   EMBEDDING_SEND_DIMENSIONS: bool.default(false),
   AI_TIMEOUT_MS: z.coerce.number().int().default(60_000),
   /** Illustrative pricing for the AI cost estimate (USD per 1M tokens) — not a bill. */
@@ -42,6 +42,8 @@ const schema = z.object({
   PARTNER_OFFER_HOURS: z.coerce.number().int().default(12),
 
   KNOWLEDGE_STORAGE_DIR: z.string().default('storage/knowledge'),
+  /** Built frontend (apps/frontend/dist) to serve from this process; empty = API only. */
+  WEB_DIST_DIR: z.string().default(''),
 
   SMTP_HOST: z.string().default(''),
   SMTP_PORT: z.coerce.number().int().default(587),

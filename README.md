@@ -18,7 +18,7 @@ Every AI decision is audited, with its token cost.
 | Frontend | React 19, Vite, TypeScript, Tailwind CSS 4, React Router, TanStack Query, Zustand |
 | API | Node 22, Express 5, TypeScript, zod, JWT (jose), Vercel AI SDK, pino, nodemailer |
 | Database | MongoDB 8 (Mongoose): Atlas Search (fuzzy), Atlas Vector Search, `2dsphere` + `$geoNear`, multi-document transactions |
-| AI models | NVIDIA API: `nemotron-3-super` (tool-calling agents), `nemotron-3.5-lightning` (fast), `embed-qa-4` (1024-dim embeddings) |
+| AI models | NVIDIA API: `nemotron-3-ultra` (tool-calling agents), `nemotron-3.5-lightning` (fast), `nemotron-3-embed-1b` (2048-dim embeddings) |
 
 **Docs:** [architecture](docs/architecture.md) · [demo script](docs/demo-script.md) · [RAG evaluation](docs/rag-eval-results.md) · [plan](PLAN.md). `GET /api` lists every endpoint.
 

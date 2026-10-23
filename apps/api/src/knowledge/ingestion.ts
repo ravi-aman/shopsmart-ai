@@ -94,7 +94,14 @@ async function process(id: string, meta: DocMetadata, type: SourceType, content:
     await PolicyDocument.updateOne({ _id: id }, { status: 'PROCESSING', errorMessage: null })
     const sections = await parseDocument(content, type, meta.title)
     const chunks = chunk(meta.title, meta.version, sections)
-    const vectors = nvidiaConfigured() ? await embedMany(chunks.map((c) => c.content), 'passage') : null
+    // embeddings are optional here: without them the chunks are still searchable by keyword,
+    // and embedMissingChunks() fills them in on the next start
+    const vectors = nvidiaConfigured()
+      ? await embedMany(chunks.map((c) => c.content), 'passage').catch((e) => {
+          logger.warn({ id, err: (e as Error).message }, 'chunk embedding failed; stored for keyword search')
+          return null
+        })
+      : null
     await PolicyChunk.deleteMany({ document: id })
     await PolicyChunk.insertMany(
       chunks.map((c, i) => ({

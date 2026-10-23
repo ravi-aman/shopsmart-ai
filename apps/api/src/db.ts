@@ -87,6 +87,14 @@ export async function ensureSearchIndexes() {
       if (existing.length === 0) {
         await col.createSearchIndex({ name: idx.name, type: idx.type, definition: idx.definition })
         logger.info({ index: idx.name }, 'created search index')
+      } else if (idx.type === 'vectorSearch') {
+        // the embedding model changed size: rebuild the index and drop vectors of the old size
+        const dims = ((existing[0] as { latestDefinition?: unknown }).latestDefinition as { fields?: { type: string; numDimensions?: number }[] })?.fields?.find((f) => f.type === 'vector')?.numDimensions
+        if (dims && dims !== config.EMBEDDING_DIMENSIONS) {
+          await col.updateSearchIndex(idx.name, idx.definition)
+          await col.updateMany({ embedding: { $exists: true } }, { $unset: { embedding: '' } })
+          logger.info({ index: idx.name, from: dims, to: config.EMBEDDING_DIMENSIONS }, 'vector index resized; embeddings will be recomputed')
+        }
       }
       if (idx.type === 'search') capabilities.atlasSearch = true
       else capabilities.vectorSearch = true

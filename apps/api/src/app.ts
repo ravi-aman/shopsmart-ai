@@ -1,3 +1,5 @@
+import { existsSync } from 'node:fs'
+import path from 'node:path'
 import cors from 'cors'
 import express, { type Router } from 'express'
 import helmet from 'helmet'
@@ -30,6 +32,13 @@ export function createApp(extraRouters: Router[] = []) {
   app.use(authenticate)
 
   for (const r of [healthRouter, customerRouter, catalogRouter, cartRouter, aiRouter, assistantRouter, knowledgeRouter, ordersRouter, notificationsRouter, expiryRouter, opsRouter, supportRouter, ...extraRouters]) app.use(r)
+
+  // single-service deploys: serve the React app and let client-side routes fall back to index.html
+  const web = config.WEB_DIST_DIR && path.resolve(config.WEB_DIST_DIR)
+  if (web && existsSync(path.join(web, 'index.html'))) {
+    app.use(express.static(web, { index: false, maxAge: '1h', setHeaders: (res, file) => file.includes(`${path.sep}assets${path.sep}`) && res.setHeader('Cache-Control', 'public, max-age=31536000, immutable') }))
+    app.get(/^(?!\/api(\/|$)).*/, (_req, res) => res.sendFile(path.join(web, 'index.html')))
+  }
 
   app.use((req, res) => problem(res, req, 404, 'NOT_FOUND', `No endpoint ${req.method} ${req.path}`))
   app.use(errorMiddleware)

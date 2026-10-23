@@ -1,0 +1,9 @@
+node_modules
+**/node_modules
+**/dist
+apps/api/storage
+.env
+.env.*
+!.env.example
+.git
+*.docx

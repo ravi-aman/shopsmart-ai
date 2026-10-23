@@ -17,5 +17,5 @@ COPY seed ./seed
 RUN mkdir -p /data/knowledge && chown -R node:node /data
 USER node
 EXPOSE 8080
-HEALTHCHECK --interval=30s --timeout=5s --start-period=60s CMD wget -qO- http://127.0.0.1:8080/api/health > /dev/null || exit 1
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s CMD wget -qO- "http://127.0.0.1:${PORT:-8080}/api/health" > /dev/null || exit 1
 CMD ["node", "dist/server.js"]
