@@ -5,9 +5,13 @@ import { cn } from '@/lib/cn'
 interface Health {
   status: string
   database: string
-  pgvector: string
+  search: string
+  vectorSearch: string
+  transactions: boolean
   products: number
   knowledgeChunks: number
+  ai: string
+  email: string
 }
 
 export function StatusPage() {
@@ -16,21 +20,25 @@ export function StatusPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
       <h1 className="text-2xl font-bold tracking-tight">System status</h1>
-      <p className="mt-1 text-sm text-ink-muted">Backend, Supabase database and pgvector.</p>
+      <p className="mt-1 text-sm text-ink-muted">API, MongoDB, search indexes, NVIDIA models and email.</p>
 
       <div className="mt-6 rounded-card border border-line bg-surface">
-        {health.isPending && <p className="p-4 text-sm text-ink-muted">Checking backend…</p>}
+        {health.isPending && <p className="p-4 text-sm text-ink-muted">Checking the API…</p>}
         {health.isError && (
           <p className="p-4 text-sm text-stock-out">
-            Backend unreachable:{' '}
-            {health.error instanceof ApiError ? health.error.message : 'is the Spring Boot app running on :8080?'}
+            API unreachable:{' '}
+            {health.error instanceof ApiError ? health.error.message : 'is the API running (npm run dev:api)?'}
           </p>
         )}
         {health.data && (
           <dl className="divide-y divide-line text-sm">
             <Row label="API" value={health.data.status} ok={health.data.status === 'UP'} />
-            <Row label="Database" value={health.data.database.split(' on ')[0]} ok />
-            <Row label="pgvector" value={health.data.pgvector} ok={health.data.pgvector !== 'NOT INSTALLED'} />
+            <Row label="Database" value={health.data.database} ok />
+            <Row label="Transactions" value={health.data.transactions ? 'Replica set' : 'Standalone (no transactions)'} ok={health.data.transactions} />
+            <Row label="Product search" value={health.data.search} ok={health.data.search.startsWith('Atlas')} />
+            <Row label="Vector search" value={health.data.vectorSearch} ok={health.data.vectorSearch.startsWith('Atlas')} />
+            <Row label="AI models" value={health.data.ai} ok={!health.data.ai.startsWith('fallback')} />
+            <Row label="Email" value={health.data.email} ok={!health.data.email.startsWith('disabled')} />
             <Row label="Products" value={String(health.data.products)} ok={health.data.products > 0} />
             <Row label="Knowledge chunks" value={String(health.data.knowledgeChunks)} ok={health.data.knowledgeChunks > 0} />
           </dl>

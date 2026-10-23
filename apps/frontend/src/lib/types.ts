@@ -1,6 +1,6 @@
 export type Availability = 'IN_STOCK' | 'LOW_STOCK' | 'OUT_OF_STOCK'
 export type MembershipTier = 'BASIC' | 'PRIME' | 'PREMIUM'
-export type Role = 'CUSTOMER' | 'ADMIN' | 'OPS'
+export type Role = 'CUSTOMER' | 'ADMIN' | 'OPS' | 'PARTNER'
 
 export type SpecValue = string | number | boolean
 export type Specs = Record<string, SpecValue>
@@ -62,6 +62,7 @@ export interface ProductDetail {
   stockByWarehouse: { warehouseId: string; city: string; region: string; available: number }[]
   related: ProductSummary[]
   promotion: { code: string; description: string; percent: number; endsAt: string } | null
+  sizeChart: Record<string, Record<string, [number, number]>> | null
 }
 
 export interface Suggestion {

@@ -1,4 +1,4 @@
-import { Heart, Home, LayoutDashboard, LayoutGrid, MapPin, Package, ShoppingCart, Sparkles, User } from 'lucide-react'
+import { HandHeart, Heart, Home, LayoutDashboard, LayoutGrid, MapPin, Package, ShoppingCart, Sparkles, User } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Link, NavLink, Outlet, ScrollRestoration, useLocation } from 'react-router'
 import { departments } from '@/app/categories'
@@ -8,6 +8,7 @@ import { SearchBox } from '@/app/SearchBox'
 import { useAuth } from '@/features/auth/authStore'
 import { useCart } from '@/features/cart/useCart'
 import { CompareTray } from '@/features/compare/CompareTray'
+import { NotificationBell } from '@/features/notifications/NotificationBell'
 import { cn } from '@/lib/cn'
 import { regionLabel } from '@/lib/format'
 
@@ -38,6 +39,7 @@ export function AppLayout() {
             </div>
 
             <SearchBox key={location.pathname === '/search' ? location.search : 'search'} />
+            <NotificationBell />
 
             <nav className="hidden shrink-0 items-center gap-1 text-sm md:flex">
               <HeaderLink
@@ -46,9 +48,10 @@ export function AppLayout() {
                 label={user ? user.name.split(' ')[0] : 'Sign in'}
                 sub={user ? `${user.membershipTier.toLowerCase()} member` : undefined}
               />
-              {user && user.role !== 'CUSTOMER' && (
+              {user && (user.role === 'ADMIN' || user.role === 'OPS') && (
                 <HeaderLink to="/admin" icon={<LayoutDashboard className="size-5" aria-hidden />} label="Console" />
               )}
+              {user?.role === 'PARTNER' && <HeaderLink to="/partner" icon={<HandHeart className="size-5" aria-hidden />} label="Partner portal" />}
               {user && <HeaderLink to="/orders" icon={<Package className="size-5" aria-hidden />} label="Orders" />}
               <HeaderLink to="/wishlist" icon={<Heart className="size-5" aria-hidden />} label="Wishlist" />
               <HeaderLink
@@ -104,9 +107,14 @@ export function AppLayout() {
       <footer className="border-t border-line bg-surface pb-16 md:pb-0">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-4 py-6 text-xs text-ink-subtle">
           <span>ShopSmart AI — hackathon build</span>
-          <Link to="/status" className="hover:text-ink">
-            System status
-          </Link>
+          <span className="flex gap-4">
+            <Link to="/support" className="hover:text-ink">
+              Help & support
+            </Link>
+            <Link to="/status" className="hover:text-ink">
+              System status
+            </Link>
+          </span>
         </div>
       </footer>
 

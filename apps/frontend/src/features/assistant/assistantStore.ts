@@ -99,7 +99,7 @@ export const useAssistant = create<AssistantState>()((set, get) => ({
       update((t) => (t.pending ? { pending: false, error: t.result ? null : 'The assistant stopped before answering.' } : {}))
     } catch (e) {
       if (e instanceof DOMException && e.name === 'AbortError') return
-      update({ pending: false, error: e instanceof ApiError ? e.message : 'Could not reach the assistant. Is the backend running?' })
+      update({ pending: false, error: e instanceof ApiError ? e.message : 'Could not reach the assistant. Is the API running?' })
     }
   },
 }))

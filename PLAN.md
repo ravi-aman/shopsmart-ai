@@ -1,5 +1,8 @@
 # ShopSmart AI — Implementation Plan (Hackathon stack, monorepo)
 
+> **Stack update (2026-10-23):** the backend was rewritten from Spring Boot + Supabase Postgres to **Express 5 + TypeScript + MongoDB** (`apps/api`), keeping the same API contract and NVIDIA models, and adding expiry/NGO partners, checkout assistant, premium tools, restock alerts, notifications and support. See [README](README.md) and [docs/architecture.md](docs/architecture.md) for the current design; the plan below is the original and kept for history.
+
+
 Source brief: `ShopSmartAI_Hackathon_Usecase.docx`
 Stack (exactly as the brief recommends):
 

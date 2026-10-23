@@ -1,4 +1,4 @@
-import { BookOpen, ClipboardList, LayoutDashboard, ScrollText, Warehouse } from 'lucide-react'
+import { BookOpen, ClipboardList, HandHeart, Headset, LayoutDashboard, ScrollText, Timer, Warehouse } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Navigate, NavLink, Outlet, useLocation } from 'react-router'
 import { useAuth } from '@/features/auth/authStore'
@@ -8,6 +8,9 @@ const links = [
   { to: '/admin', label: 'Overview', icon: LayoutDashboard, end: true },
   { to: '/admin/orders', label: 'Orders', icon: ClipboardList },
   { to: '/admin/inventory', label: 'Inventory', icon: Warehouse },
+  { to: '/admin/expiry', label: 'Expiry & surplus', icon: Timer },
+  { to: '/admin/partners', label: 'NGO partners', icon: HandHeart },
+  { to: '/admin/support', label: 'Support cases', icon: Headset },
   { to: '/admin/knowledge', label: 'Knowledge base', icon: BookOpen },
   { to: '/admin/audit', label: 'AI audit log', icon: ScrollText },
 ]
@@ -17,7 +20,7 @@ export function AdminLayout() {
   const user = useAuth((s) => s.user)
   const location = useLocation()
   if (!user) return <Navigate to={`/login?next=${encodeURIComponent(location.pathname)}`} replace />
-  if (user.role === 'CUSTOMER') {
+  if (user.role !== 'ADMIN' && user.role !== 'OPS') {
     return (
       <div className="mx-auto max-w-md px-4 py-16 text-center">
         <p className="text-lg font-semibold">Staff only</p>

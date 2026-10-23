@@ -4,6 +4,7 @@ import { Link } from 'react-router'
 import { buttonStyles, StockBadge } from '@/components/Bits'
 import { ProductImage } from '@/components/ProductImage'
 import { useAuth } from '@/features/auth/authStore'
+import { BudgetAssistant } from '@/features/cart/BudgetAssistant'
 import { MAX_QUANTITY, useCart } from '@/features/cart/useCart'
 import { formatPrice } from '@/lib/format'
 
@@ -127,6 +128,7 @@ export function CartPage() {
             Proceed to checkout
           </Link>
           <p className="mt-2 text-center text-xs text-ink-subtle">Delivery fee and date are shown at checkout.</p>
+          <BudgetAssistant />
         </aside>
       </div>
     </div>

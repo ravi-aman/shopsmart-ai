@@ -8,9 +8,7 @@ coverage/
 playwright-report/
 test-results/
 
-apps/backend/target/
-apps/backend/.mvn/wrapper/maven-wrapper.jar
-apps/backend/storage/
+apps/api/storage/
 
 .idea/
 .vscode/

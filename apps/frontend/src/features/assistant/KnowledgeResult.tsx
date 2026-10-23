@@ -1,6 +1,8 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { BookOpenCheck, ChevronDown, FileText, Headset, Info, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router'
+import { useAuth } from '@/features/auth/authStore'
 import type { Citation, Confidence, KnowledgeAnswer, SourceSection } from '@/features/assistant/types'
 import { api } from '@/lib/api'
 import { cn } from '@/lib/cn'
@@ -43,12 +45,7 @@ export function KnowledgeResult({ result }: { result: KnowledgeAnswer }) {
             ))}
         </p>
 
-        {result.followUpRequired && (
-          <p className="mt-3 flex gap-2 rounded-lg bg-canvas px-3 py-2 text-xs text-ink-muted">
-            <Headset className="mt-px size-4 shrink-0" aria-hidden />
-            Flagged for a support agent. You’ll get a reply by email; nothing was guessed.
-          </p>
-        )}
+        {result.followUpRequired && <FollowUp auditId={result.auditId} />}
       </div>
 
       {result.sources.length > 0 && (
@@ -146,4 +143,33 @@ function SourcePanel({ citation, onClose }: { citation: Citation; onClose: () =>
 function formatDate(iso: string) {
   const d = new Date(`${iso}T00:00:00`)
   return Number.isNaN(d.getTime()) ? iso : d.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })
+}
+
+/** Low-confidence answers offer a human follow-up; the case carries the AI decision so staff see what was asked. */
+function FollowUp({ auditId }: { auditId: string | null }) {
+  const user = useAuth((s) => s.user)
+  const open = useMutation({
+    mutationFn: () =>
+      api<{ id: string }>('/api/support/cases', {
+        method: 'POST',
+        // the server attaches the question and the assistant's answer from the AI decision
+        body: JSON.stringify({ subject: 'Question the assistant could not answer', message: 'Please follow up on my question to the assistant.', aiDecisionId: auditId }),
+      }),
+  })
+  return (
+    <div className="mt-3 flex flex-wrap items-center gap-2 rounded-lg bg-canvas px-3 py-2 text-xs text-ink-muted">
+      <Headset className="size-4 shrink-0" aria-hidden />
+      <span className="flex-1">No approved policy answers this clearly, so nothing was guessed.</span>
+      {!user ? (
+        <Link to="/login?next=/support" className="font-semibold text-accent hover:underline">Sign in to ask a support agent</Link>
+      ) : open.data ? (
+        <Link to={`/support/${open.data.id}`} className="font-semibold text-stock-in hover:underline">Case opened — view it</Link>
+      ) : (
+        <button type="button" onClick={() => open.mutate()} disabled={open.isPending} className="font-semibold text-accent hover:underline disabled:opacity-50">
+          {open.isPending ? 'Opening…' : 'Ask a support agent'}
+        </button>
+      )}
+      {open.isError && <span className="w-full text-stock-out">{open.error.message}</span>}
+    </div>
+  )
 }

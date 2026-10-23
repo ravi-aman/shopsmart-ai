@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { AlertTriangle, CheckCircle2, Circle, CircleCheck, Package, PartyPopper, RotateCcw, Sparkles, XCircle } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router'
 import { buttonStyles, ErrorState, Spinner } from '@/components/Bits'
 import { ProductImage } from '@/components/ProductImage'
@@ -19,6 +19,7 @@ import {
 import { api } from '@/lib/api'
 import { cn } from '@/lib/cn'
 import { formatPrice } from '@/lib/format'
+import { postSse } from '@/lib/sse'
 
 export function OrdersPage() {
   const orders = useQuery({ queryKey: ['orders'], queryFn: () => api<OrderSummary[]>('/api/orders') })
@@ -61,6 +62,28 @@ export function OrdersPage() {
   )
 }
 
+/** Subscribes to the order's shipment events (SSE) and refetches on each one; polling stays as a fallback. */
+function useLiveTracking(id: string, active: boolean) {
+  const qc = useQueryClient()
+  const [live, setLive] = useState(false)
+  useEffect(() => {
+    if (!active) return
+    const ctrl = new AbortController()
+    postSse(`/api/orders/${id}/tracking/stream`, {}, (event) => {
+      if (event === 'snapshot') setLive(true)
+      if (event === 'event') {
+        qc.invalidateQueries({ queryKey: ['order', id] })
+        qc.invalidateQueries({ queryKey: ['orders'] })
+        qc.invalidateQueries({ queryKey: ['notifications'] })
+      }
+    }, ctrl.signal)
+      .catch(() => {})
+      .finally(() => setLive(false))
+    return () => ctrl.abort()
+  }, [id, active, qc])
+  return live
+}
+
 export function OrderDetailPage() {
   const { id = '' } = useParams()
   const [params] = useSearchParams()
@@ -79,6 +102,7 @@ export function OrderDetailPage() {
     },
   })
   const [confirmCancel, setConfirmCancel] = useState(false)
+  const live = useLiveTracking(id, !!order.data && flow.slice(0, 4).includes(order.data.status))
 
   if (order.isPending) return <div className="mx-auto max-w-5xl px-4 py-10 text-sm text-ink-muted">Loading order…</div>
   if (order.isError) return <div className="mx-auto max-w-3xl px-4 py-10"><ErrorState title="Order not found" detail={order.error.message} /></div>
@@ -102,6 +126,11 @@ export function OrderDetailPage() {
             <p className="text-sm text-ink-muted">
               Arriving <strong className="text-ink">{formatDay(eta)}</strong>
               {o.shipment?.delayed && <span className="ml-2 text-stock-low">· delayed at hub</span>}
+              {live && (
+                <span className="ml-2 inline-flex items-center gap-1 text-xs font-medium text-stock-in">
+                  <span className="size-1.5 animate-pulse rounded-full bg-stock-in" aria-hidden /> Live
+                </span>
+              )}
             </p>
           )}
         </div>

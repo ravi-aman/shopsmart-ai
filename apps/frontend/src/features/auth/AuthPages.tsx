@@ -87,8 +87,8 @@ export function LoginPage() {
         </Link>
       </p>
       <p className="mt-4 rounded-md bg-canvas px-3 py-2 text-xs text-ink-muted">
-        Demo accounts: basic@, prime@, premium@, admin@ and ops@shopsmart.dev — password is <code>DEMO_USER_PASSWORD</code>{' '}
-        from the backend <code>.env</code>.
+        Demo accounts: basic@, prime@, premium@, admin@, ops@ and partner@shopsmart.dev — password is <code>DEMO_USER_PASSWORD</code>{' '}
+        from the root <code>.env</code>.
       </p>
     </AuthShell>
   )

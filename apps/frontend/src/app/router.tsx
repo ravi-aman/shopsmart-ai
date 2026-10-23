@@ -18,6 +18,10 @@ import { StatusPage } from '@/features/system/StatusPage'
 import { WishlistPage } from '@/features/wishlist/WishlistPage'
 import { CheckoutPage } from '@/features/orders/CheckoutPage'
 import { OrderDetailPage, OrdersPage } from '@/features/orders/OrdersPages'
+import { ExpiryPage } from '@/features/admin/ExpiryPage'
+import { PartnersPage } from '@/features/admin/PartnersPage'
+import { PartnerPortal } from '@/features/partner/PartnerPortal'
+import { AdminSupportPage, CaseDetailPage, SupportPage } from '@/features/support/SupportPages'
 
 export const router = createBrowserRouter([
   {
@@ -36,6 +40,9 @@ export const router = createBrowserRouter([
       { path: 'register', element: <RegisterPage /> },
       { path: 'wishlist', element: <RequireAuth><WishlistPage /></RequireAuth> },
       { path: 'account', element: <RequireAuth><AccountPage /></RequireAuth> },
+      { path: 'support', element: <RequireAuth><SupportPage /></RequireAuth> },
+      { path: 'support/:id', element: <RequireAuth><CaseDetailPage /></RequireAuth> },
+      { path: 'partner', element: <PartnerPortal /> },
       {
         path: 'admin',
         element: <AdminLayout />,
@@ -43,6 +50,10 @@ export const router = createBrowserRouter([
           { index: true, element: <OverviewPage /> },
           { path: 'orders', element: <AdminOrdersPage /> },
           { path: 'inventory', element: <InventoryPage /> },
+          { path: 'expiry', element: <ExpiryPage /> },
+          { path: 'partners', element: <PartnersPage /> },
+          { path: 'support', element: <AdminSupportPage /> },
+          { path: 'support/:id', element: <CaseDetailPage staff /> },
           { path: 'knowledge', element: <KnowledgePage /> },
           { path: 'audit', element: <AuditPage /> },
         ],

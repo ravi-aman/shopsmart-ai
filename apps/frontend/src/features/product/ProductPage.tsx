@@ -10,6 +10,7 @@ import { useAuth } from '@/features/auth/authStore'
 import { MAX_QUANTITY, useCart } from '@/features/cart/useCart'
 import { useCompare } from '@/features/compare/compareStore'
 import { useWishlist } from '@/features/wishlist/useWishlist'
+import { NotifyMe, PremiumTools } from '@/features/product/ProductExtras'
 import { api, ApiError } from '@/lib/api'
 import { cn } from '@/lib/cn'
 import { formatSpec, regionLabel, sortSpecKeys, specLabel } from '@/lib/format'
@@ -134,6 +135,7 @@ function ProductView({ detail }: { detail: ProductDetail }) {
               </dl>
             </section>
           )}
+          <PremiumTools detail={detail} />
         </div>
 
         {/* buy box */}
@@ -266,6 +268,7 @@ function BuyBox({ detail }: { detail: ProductDetail }) {
             Buy now
           </button>
         )}
+        {outOfStock && <NotifyMe productId={p.id} />}
         {!canAdd && !outOfStock && <p className="text-xs text-stock-low">You already have all available units in your cart.</p>}
         {error && <p className="text-xs text-stock-out">{error}</p>}
       </div>

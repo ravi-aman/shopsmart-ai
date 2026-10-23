@@ -1,14 +1,29 @@
 # Whole stack: `docker compose -f infra/docker-compose.yml up --build` → http://localhost:3000
-# Uses Supabase from ../.env by default. Add `--profile local-db` for an offline Postgres + pgvector
-# (then set DB_URL=jdbc:postgresql://postgres:5432/shopsmart, DB_USERNAME/DB_PASSWORD=shopsmart in .env).
+# By default it starts a local MongoDB (Atlas Local image: replica set + Atlas Search + Vector Search).
+# To use MongoDB Atlas instead, set MONGODB_URI in ../.env and run only `api` and `frontend`.
 name: shopsmart
 
 services:
-  backend:
-    build: ../apps/backend
+  mongo:
+    image: mongodb/mongodb-atlas-local:8.0
+    environment:
+      MONGODB_INITDB_ROOT_USERNAME: shopsmart
+      MONGODB_INITDB_ROOT_PASSWORD: shopsmart
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodata:/data/db
+      - mongoconfig:/data/configdb
+    restart: unless-stopped
+
+  api:
+    build: ../apps/api
     env_file: ../.env
     environment:
+      MONGODB_URI: ${MONGODB_URI:-mongodb://shopsmart:shopsmart@mongo:27017/?directConnection=true&authSource=admin}
       KNOWLEDGE_STORAGE_DIR: /data/knowledge
+    depends_on:
+      - mongo
     volumes:
       - knowledge:/data/knowledge
     ports:
@@ -18,23 +33,12 @@ services:
   frontend:
     build: ../apps/frontend
     depends_on:
-      - backend
+      - api
     ports:
       - "${FRONTEND_PORT:-3000}:80"
     restart: unless-stopped
 
-  postgres:
-    profiles: ["local-db"]
-    image: pgvector/pgvector:pg17
-    environment:
-      POSTGRES_DB: shopsmart
-      POSTGRES_USER: shopsmart
-      POSTGRES_PASSWORD: shopsmart
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-
 volumes:
-  pgdata:
+  mongodata:
+  mongoconfig:
   knowledge:

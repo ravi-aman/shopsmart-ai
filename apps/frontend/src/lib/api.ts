@@ -1,4 +1,4 @@
-/** RFC 7807 error body returned by the Spring Boot backend. */
+/** RFC 7807 error body returned by the API. */
 export interface ApiProblem {
   status: number
   title?: string
