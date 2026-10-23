@@ -1,6 +1,8 @@
-import { createBrowserRouter } from 'react-router'
+import { createBrowserRouter, Navigate } from 'react-router'
 import { AppLayout } from '@/app/AppLayout'
 import { AccountPage } from '@/features/account/AccountPage'
+import { AdminLayout } from '@/features/admin/AdminLayout'
+import { KnowledgePage } from '@/features/admin/KnowledgePage'
 import { LoginPage, RegisterPage, RequireAuth } from '@/features/auth/AuthPages'
 import { CartPage } from '@/features/cart/CartPage'
 import { ListingPage } from '@/features/catalog/ListingPage'
@@ -25,6 +27,14 @@ export const router = createBrowserRouter([
       { path: 'register', element: <RegisterPage /> },
       { path: 'wishlist', element: <RequireAuth><WishlistPage /></RequireAuth> },
       { path: 'account', element: <RequireAuth><AccountPage /></RequireAuth> },
+      {
+        path: 'admin',
+        element: <AdminLayout />,
+        children: [
+          { index: true, element: <Navigate to="knowledge" replace /> },
+          { path: 'knowledge', element: <KnowledgePage /> },
+        ],
+      },
       { path: 'status', element: <StatusPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],

@@ -1,0 +1,33 @@
+{
+  "title": "ShopSmart Warranty Policy",
+  "sections": [
+    {
+      "title": "Overview",
+      "content": "All new products sold on ShopSmart carry the manufacturer's warranty. ShopSmart helps you file warranty claims but repairs and replacements are carried out by the brand's authorised service centres. Keep your ShopSmart invoice, which serves as proof of purchase."
+    },
+    {
+      "title": "Smartphones",
+      "content": "Smartphones have a 1-year manufacturer warranty on the device and a 6-month warranty on in-box accessories such as chargers and cables. Batteries are covered for 1 year against manufacturing defects. Physical and liquid damage are not covered."
+    },
+    {
+      "title": "Laptops",
+      "content": "Laptops have a 1-year manufacturer warranty covering hardware defects, including the battery for 1 year. Business laptops such as Lenovo ThinkPad and Dell Latitude may include onsite service. Extended warranty plans of 1 or 2 additional years can be bought within 30 days of delivery."
+    },
+    {
+      "title": "Tablets and Audio",
+      "content": "Tablets have a 1-year manufacturer warranty. Headphones, earbuds and speakers have a 1-year manufacturer warranty; ear tips and cushions are not covered."
+    },
+    {
+      "title": "Large Appliances",
+      "content": "Washing machines and refrigerators have a 2-year comprehensive warranty. Inverter compressors in refrigerators and air conditioners and direct-drive motors in washing machines are covered for 10 years. Air conditioners have a 1-year comprehensive warranty and 5 years on the PCB."
+    },
+    {
+      "title": "Health Devices",
+      "content": "Blood pressure monitors, thermometers, oximeters and glucometers have a 2-year manufacturer warranty, excluding consumables such as test strips, cuffs and batteries."
+    },
+    {
+      "title": "How to Claim",
+      "content": "Open the order in ShopSmart, choose Warranty Claim, describe the issue and upload a photo or video. ShopSmart shares the nearest authorised service centre or schedules a pickup where the brand offers it. Claims are usually resolved within 7 to 15 days."
+    }
+  ]
+}

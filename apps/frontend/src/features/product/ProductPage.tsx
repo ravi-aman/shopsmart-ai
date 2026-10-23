@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
-import { Check, GitCompareArrows, Heart, MapPin, Minus, Plus, ShieldCheck, Truck } from 'lucide-react'
+import { Check, GitCompareArrows, Heart, MapPin, Minus, Plus, ShieldCheck, Sparkles, Truck } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { buttonStyles, ErrorState, Price, Rating, Spinner, StockBadge } from '@/components/Bits'
 import { ProductCard } from '@/components/ProductCard'
 import { ProductImage } from '@/components/ProductImage'
+import { useAssistant } from '@/features/assistant/assistantStore'
 import { useAuth } from '@/features/auth/authStore'
 import { MAX_QUANTITY, useCart } from '@/features/cart/useCart'
 import { useCompare } from '@/features/compare/compareStore'
@@ -279,11 +280,36 @@ function BuyBox({ detail }: { detail: ProductDetail }) {
         </button>
       </div>
 
-      <p className="mt-5 flex gap-2 border-t border-line pt-4 text-xs text-ink-muted">
-        <ShieldCheck className="size-4 shrink-0" aria-hidden />
-        Return, refund and warranty terms come from ShopSmart policy documents — ask the assistant for the rules that
-        apply to this item.
-      </p>
+      <AskAboutProduct id={p.id} name={p.name} categoryName={p.categoryName} />
     </aside>
+  )
+}
+
+/** Policy questions scoped to this product; answers come from approved documents with citations. */
+function AskAboutProduct({ id, name, categoryName }: { id: string; name: string; categoryName: string }) {
+  const ask = useAssistant((s) => s.ask)
+  const noun = categoryName.toLowerCase().replace(/s$/, '')
+  const questions = [`What is the warranty on this ${noun}?`, `Can I return this ${noun} if opened?`, 'Can I cancel after it ships?']
+  return (
+    <div className="mt-5 border-t border-line pt-4">
+      <p className="flex items-center gap-1.5 text-xs font-semibold text-ink">
+        <ShieldCheck className="size-4 text-ink-muted" aria-hidden />
+        Returns, warranty & delivery
+      </p>
+      <p className="mt-0.5 text-xs text-ink-muted">Answered from ShopSmart policy documents, with the source.</p>
+      <div className="mt-2 flex flex-wrap gap-1.5">
+        {questions.map((q) => (
+          <button
+            key={q}
+            type="button"
+            onClick={() => ask(q, { id, name })}
+            className="inline-flex items-center gap-1 rounded-full border border-ai/30 bg-ai-soft px-2.5 py-1 text-xs font-medium text-ai hover:bg-ai hover:text-white"
+          >
+            <Sparkles className="size-3" aria-hidden />
+            {q}
+          </button>
+        ))}
+      </div>
+    </div>
   )
 }

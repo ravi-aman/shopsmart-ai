@@ -104,3 +104,4 @@ springdoc:
 logging:
   level:
     com.shopsmart: INFO
+    org.apache.pdfbox: ERROR

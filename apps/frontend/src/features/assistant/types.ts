@@ -51,6 +51,48 @@ export interface RecommendResponse {
   aiAssisted: boolean
 }
 
+export type Confidence = 'HIGH' | 'MEDIUM' | 'LOW'
+
+export interface Citation {
+  n: number
+  chunkId: string
+  documentId: string
+  document: string
+  section: string
+  version: string
+  effectiveDate: string
+  snippet: string
+}
+
+export interface KnowledgeAnswer {
+  answer: string
+  confidence: Confidence
+  sources: { document: string; section: string; version: string }[]
+  followUpRequired: boolean
+  citations: Citation[]
+  notices: string[]
+  auditId: string | null
+  aiAssisted: boolean
+}
+
+export type AgentName = 'SHOPPING' | 'KNOWLEDGE'
+
+export type AssistantResult =
+  | { agent: 'SHOPPING'; data: RecommendResponse }
+  | { agent: 'KNOWLEDGE'; data: KnowledgeAnswer }
+
+export interface SourceSection {
+  chunkId: string
+  documentId: string
+  document: string
+  section: string
+  version: string
+  effectiveDate: string
+  category: string
+  active: boolean
+  text: string
+}
+
 export interface Step {
   id: string
   label: string

@@ -248,7 +248,7 @@ Return policy (MD), Laptop return policy — opened products (PDF), Shipping pol
 | **P0 Setup** ✅ | Monorepo, Supabase config, Spring Boot + Spring AI + Flyway schema, NVIDIA chat + embedding model, Vite React shell, root scripts | Done — backend builds, Flyway V1 applies, `/api/health` UP with pgvector; frontend builds. NVIDIA round-trip (`/api/health/ai`) pending an API key |
 | **P1 Commerce core** ✅ | Schema, seed, auth, catalog, search, facets, PDP, cart, wishlist, compare, prefs, responsive UI | Full shopping flow without AI |
 | **P2 Module 1 AI** ✅ | Product embeddings, hybrid search, intent extraction, scoring, reasons, assistant drawer, audit | Done — brief query returns the exact JSON; works without NVIDIA via rule-based fallback; NVIDIA path untested until a key is added |
-| **P3 Module 2 RAG** | Upload, ETL (PDF/MD/JSON), hybrid retrieval, grounded answer, confidence, citations, versioning, seed docs | All 5 example questions answered with sources |
+| **P3 Module 2 RAG** ✅ | Upload, ETL (PDF/MD/JSON), hybrid retrieval, grounded answer, confidence, citations, versioning, seed docs | Done — all 5 brief questions answered with correct sources offline (extractive mode); LLM-grounded mode untested until a key is added |
 | **P4 Orders + Agents** | Checkout sim, shipments, scheduler, tracking, orchestrator + agents, confirm-to-act | "Where's my order and can I return it?" works end to end |
 | **P5 Ops console** | Inventory, forecast, fulfillment, promotions, audit viewer, KPIs | Admin demo story works |
 | **P6 Deliverables** | RAG eval, tests, architecture diagram, setup docs, demo script, reset-demo button | Fresh clone → documented commands → working app |

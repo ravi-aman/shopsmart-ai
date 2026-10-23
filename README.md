@@ -75,6 +75,17 @@ Flyway creates the schema on first backend start.
 
 Pipeline: NVIDIA fast model extracts intent (rule parser as fallback) → SQL hard filters + hybrid keyword/vector ranking (RRF) → deterministic spec scoring → NVIDIA agent model writes explanations, rejected if they cite numbers not in the product data → everything logged to `ai_audit_log`.
 
+## Knowledge assistant (Module 2, RAG)
+
+- `POST /api/ai/knowledge/ask` `{"question": "Can I return an opened laptop?", "productId": "LAP101"?}` → `{answer, confidence, sources[], followUpRequired}` plus numbered citations and `auditId`.
+- `POST /api/ai/assistant/stream` `{"message": "..."}` → routes to the shopping or knowledge agent (`route` event), then streams `step`s and the `result`.
+- `GET /api/ai/knowledge/chunks/{id}` → the full cited section (document, version, effective date).
+- Admin (ADMIN/OPS): `GET /api/admin/documents`, `POST /api/admin/documents` (multipart: `file`, `title`, `category`, `version`, `effectiveDate`, `region`, `tiers`), `GET /api/admin/documents/{id}`, `POST /api/admin/documents/{id}/reprocess`. UI at `/admin/knowledge`.
+
+Seed documents live in `apps/backend/src/main/resources/seed/knowledge/` (`manifest.json` holds version, effective date, category, region, tiers) and are ingested on first start through the same pipeline as uploads. PDFs are generated from `scripts/seed/pdf-src/*.md` by `scripts/seed/build-pdfs.py`.
+
+Pipeline: parse (PDF headings/outline, Markdown headings, JSON sections) → section-aware chunks with a context header → NVIDIA embeddings (`passage`) → hybrid retrieval (full-text + pgvector, RRF, category boost, lexical rerank) over active, in-force versions → grounded answer from numbered excerpts (NVIDIA agent model; extractive quote when offline) → citations validated, numbers checked against sources → confidence computed from evidence; LOW means "not found" + `followUpRequired: true`.
+
 ## Offline database (optional)
 
 ```bash

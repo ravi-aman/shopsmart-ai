@@ -40,8 +40,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/health", "/api/health/**", "/actuator/health", "/api/auth/**").permitAll()
                         .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/catalog/**", "/api/ai/decisions/*").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/ai/shopping/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/catalog/**", "/api/ai/decisions/*", "/api/ai/knowledge/chunks/*").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/ai/shopping/**", "/api/ai/knowledge/ask", "/api/ai/assistant/**").permitAll()
                         .requestMatchers("/api/admin/**", "/api/ops/**").hasAnyRole("ADMIN", "OPS")
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(o -> o.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));

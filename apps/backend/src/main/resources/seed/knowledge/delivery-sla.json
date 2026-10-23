@@ -1,0 +1,33 @@
+{
+  "title": "Delivery SLA by Region",
+  "sections": [
+    {
+      "title": "How Delivery Estimates Work",
+      "content": "Delivery estimates are counted in calendar days from dispatch. Dispatch happens on the same day for orders placed before 2 pm from ShopSmart fulfilment centres. Estimates below are for Standard delivery; One-Day and Same-Day delivery follow the Shipping Policy."
+    },
+    {
+      "title": "West India (IN-WEST)",
+      "content": "Fulfilment centre: Mumbai. Metro cities (Mumbai, Pune, Ahmedabad): 1 to 2 days. Other cities: 2 to 4 days. Remote pin codes: 5 to 7 days."
+    },
+    {
+      "title": "North India (IN-NORTH)",
+      "content": "Fulfilment centre: Gurugram. Metro cities (Delhi NCR, Chandigarh, Jaipur): 1 to 2 days. Other cities: 3 to 5 days. Remote and hill pin codes: 5 to 8 days."
+    },
+    {
+      "title": "South India (IN-SOUTH)",
+      "content": "Fulfilment centres: Bengaluru and Hyderabad. Metro cities (Bengaluru, Hyderabad, Chennai): 1 to 2 days. Other cities: 2 to 4 days. Remote pin codes: 5 to 7 days."
+    },
+    {
+      "title": "East India (IN-EAST)",
+      "content": "Fulfilment centre: Kolkata. Metro cities (Kolkata, Bhubaneswar): 2 to 3 days. Other cities: 3 to 5 days. North-east and remote pin codes: 6 to 9 days."
+    },
+    {
+      "title": "Cross-Region Orders",
+      "content": "When the item is not in stock in the shopper's region, it ships from another fulfilment centre and 2 days are added to the estimate."
+    },
+    {
+      "title": "Late Delivery Compensation",
+      "content": "If a Prime or Premium order arrives more than 2 days after the promised date, the member receives a $5 ShopSmart Wallet credit automatically."
+    }
+  ]
+}

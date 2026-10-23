@@ -1,0 +1,13 @@
+[
+  { "file": "return-policy-2025.md", "title": "ShopSmart Return Policy", "category": "RETURN", "version": "2025.2", "effectiveDate": "2025-07-01", "region": "GLOBAL", "tiers": ["BASIC", "PRIME", "PREMIUM"] },
+  { "file": "return-policy-2026.md", "title": "ShopSmart Return Policy", "category": "RETURN", "version": "2026.1", "effectiveDate": "2026-01-01", "region": "GLOBAL", "tiers": ["BASIC", "PRIME", "PREMIUM"] },
+  { "file": "laptop-return-policy.pdf", "title": "Laptop Return Policy", "category": "RETURN", "version": "2026.1", "effectiveDate": "2026-01-01", "region": "GLOBAL", "tiers": ["BASIC", "PRIME", "PREMIUM"] },
+  { "file": "refund-policy.pdf", "title": "Refund Policy", "category": "REFUND", "version": "2026.1", "effectiveDate": "2026-01-01", "region": "GLOBAL", "tiers": ["BASIC", "PRIME", "PREMIUM"] },
+  { "file": "shipping-policy.md", "title": "Shipping Policy", "category": "SHIPPING", "version": "2026.2", "effectiveDate": "2026-04-01", "region": "GLOBAL", "tiers": ["BASIC", "PRIME", "PREMIUM"] },
+  { "file": "membership-benefits.md", "title": "Membership Benefits", "category": "MEMBERSHIP", "version": "2026.1", "effectiveDate": "2026-01-01", "region": "GLOBAL", "tiers": ["BASIC", "PRIME", "PREMIUM"] },
+  { "file": "cancellation-policy.md", "title": "Order Cancellation Policy", "category": "CANCELLATION", "version": "2026.1", "effectiveDate": "2026-01-01", "region": "GLOBAL", "tiers": ["BASIC", "PRIME", "PREMIUM"] },
+  { "file": "warranty-policy.json", "title": "Warranty Policy", "category": "WARRANTY", "version": "2026.1", "effectiveDate": "2026-01-01", "region": "GLOBAL", "tiers": ["BASIC", "PRIME", "PREMIUM"] },
+  { "file": "delivery-sla.json", "title": "Delivery SLA by Region", "category": "SLA", "version": "2026.1", "effectiveDate": "2026-01-01", "region": "GLOBAL", "tiers": ["BASIC", "PRIME", "PREMIUM"] },
+  { "file": "seller-guidelines.pdf", "title": "Seller Guidelines", "category": "SELLER", "version": "2025.3", "effectiveDate": "2025-10-01", "region": "GLOBAL", "tiers": ["BASIC", "PRIME", "PREMIUM"] },
+  { "file": "dell-inspiron-15-manual.md", "title": "Dell Inspiron 15 Manual", "category": "MANUAL", "version": "1.0", "effectiveDate": "2025-06-01", "region": "GLOBAL", "tiers": ["BASIC", "PRIME", "PREMIUM"] }
+]

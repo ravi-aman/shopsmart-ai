@@ -1,4 +1,4 @@
-import { Heart, Home, LayoutGrid, MapPin, ShoppingCart, Sparkles, User } from 'lucide-react'
+import { Heart, Home, LayoutDashboard, LayoutGrid, MapPin, ShoppingCart, Sparkles, User } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Link, NavLink, Outlet, ScrollRestoration, useLocation } from 'react-router'
 import { departments } from '@/app/categories'
@@ -46,6 +46,9 @@ export function AppLayout() {
                 label={user ? user.name.split(' ')[0] : 'Sign in'}
                 sub={user ? `${user.membershipTier.toLowerCase()} member` : undefined}
               />
+              {user && user.role !== 'CUSTOMER' && (
+                <HeaderLink to="/admin" icon={<LayoutDashboard className="size-5" aria-hidden />} label="Console" />
+              )}
               <HeaderLink to="/wishlist" icon={<Heart className="size-5" aria-hidden />} label="Wishlist" />
               <HeaderLink
                 to="/cart"

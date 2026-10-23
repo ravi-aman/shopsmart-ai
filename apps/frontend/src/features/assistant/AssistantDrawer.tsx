@@ -19,6 +19,7 @@ import { Link } from 'react-router'
 import { StockBadge } from '@/components/Bits'
 import { ProductImage } from '@/components/ProductImage'
 import { type Turn, useAssistant } from '@/features/assistant/assistantStore'
+import { KnowledgeResult } from '@/features/assistant/KnowledgeResult'
 import type { Decision, RecommendResponse, Recommendation } from '@/features/assistant/types'
 import { useAuth } from '@/features/auth/authStore'
 import { useCart } from '@/features/cart/useCart'
@@ -29,8 +30,9 @@ import { formatPrice } from '@/lib/format'
 export const examplePrompts = [
   'Suggest a laptop under $1000 for Java development and AI projects',
   'Noise cancelling headphones for travel under $300',
-  'A gaming laptop with an RTX GPU under $1200',
-  'Books to learn AI engineering',
+  'Can I return an opened laptop?',
+  'Does Prime membership include free delivery?',
+  'What is the refund timeline?',
 ]
 
 const useCaseLabel: Record<string, string> = {
@@ -42,7 +44,7 @@ const useCaseLabel: Record<string, string> = {
 
 /** Shopping assistant panel (Amazon Rufus–style): lives beside whatever page the shopper is on. */
 export function AssistantDrawer() {
-  const { open, turns, setOpen, ask, reset } = useAssistant()
+  const { open, turns, setOpen, ask, reset, product, setProduct } = useAssistant()
   const [text, setText] = useState('')
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -68,7 +70,8 @@ export function AssistantDrawer() {
     setText('')
   }
 
-  const awaitingClarification = turns.at(-1)?.result?.clarifyingQuestion
+  const lastResult = turns.at(-1)?.result
+  const awaitingClarification = lastResult?.agent === 'SHOPPING' && lastResult.data.clarifyingQuestion
 
   return (
     <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="ShopSmart AI assistant">
@@ -80,7 +83,7 @@ export function AssistantDrawer() {
           </span>
           <div className="flex-1 leading-tight">
             <p className="font-semibold">ShopSmart AI</p>
-            <p className="text-xs text-ink-muted">Recommendations explained from real specs</p>
+            <p className="text-xs text-ink-muted">Product picks and policy answers, with sources</p>
           </div>
           {turns.length > 0 && (
             <button type="button" onClick={reset} className="rounded-md p-2 text-ink-muted hover:bg-canvas hover:text-ink" title="New conversation">
@@ -97,9 +100,10 @@ export function AssistantDrawer() {
         <div ref={scrollRef} className="flex-1 space-y-5 overflow-y-auto px-4 py-4" aria-live="polite">
           {turns.length === 0 ? (
             <div className="pt-4">
-              <p className="text-lg font-semibold">What are you shopping for?</p>
+              <p className="text-lg font-semibold">How can I help?</p>
               <p className="mt-1 text-sm text-ink-muted">
-                Describe what you need, your budget and how you’ll use it. I’ll pick in-stock products and show exactly why.
+                Describe what you need and your budget, and I’ll pick in-stock products and show why. Ask about returns,
+                refunds, delivery or warranty and I’ll answer from ShopSmart’s approved policies, with the source.
               </p>
               <ul className="mt-5 space-y-2">
                 {examplePrompts.map((p) => (
@@ -127,6 +131,14 @@ export function AssistantDrawer() {
             submit()
           }}
         >
+          {product && (
+            <p className="mb-2 flex items-center gap-1.5 text-xs text-ink-muted">
+              Asking about <span className="truncate font-semibold text-ink">{product.name}</span>
+              <button type="button" onClick={() => setProduct(null)} className="ml-auto rounded p-0.5 hover:bg-canvas" aria-label="Stop asking about this product">
+                <X className="size-3.5" />
+              </button>
+            </p>
+          )}
           <div className="flex items-end gap-2 rounded-xl border border-line-strong bg-surface px-3 py-2 focus-within:border-ai">
             <label htmlFor="assistant-input" className="sr-only">
               Message the shopping assistant
@@ -193,7 +205,13 @@ function TurnView({ turn, onAsk }: { turn: Turn; onAsk: (q: string) => void }) {
           {turn.error}
         </p>
       )}
-      {turn.result && <ResultView result={turn.result} steps={turn.steps} onAsk={onAsk} />}
+      {turn.result?.agent === 'SHOPPING' && <ResultView result={turn.result.data} steps={turn.steps} onAsk={onAsk} />}
+      {turn.result?.agent === 'KNOWLEDGE' && (
+        <>
+          <KnowledgeResult result={turn.result.data} />
+          {turn.result.data.auditId && <DecisionFooter auditId={turn.result.data.auditId} />}
+        </>
+      )}
     </div>
   )
 }
@@ -472,8 +490,10 @@ function DecisionFooter({ auditId }: { auditId: string }) {
                 </dd>
                 <dt className="text-ink-subtle">Latency</dt>
                 <dd>{trace.data.latencyMs} ms</dd>
-                <dt className="text-ink-subtle">Candidates</dt>
-                <dd>{trace.data.retrievedIds.length} products considered</dd>
+                <dt className="text-ink-subtle">Retrieved</dt>
+                <dd>
+                  {trace.data.retrievedIds.length} {trace.data.agent === 'KNOWLEDGE' ? 'policy sections' : 'products'} considered
+                </dd>
               </dl>
               <ol className="mt-2 space-y-1 border-t border-line pt-2">
                 {trace.data.toolCalls.map((c, idx) => (
