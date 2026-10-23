@@ -74,7 +74,7 @@ function ProductView({ detail }: { detail: ProductDetail }) {
         ))}
       </nav>
 
-      <div className="grid gap-8 lg:grid-cols-[1.1fr_1fr_340px]">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)_300px] xl:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)_340px]">
         {/* gallery */}
         <div className="flex flex-col-reverse gap-3 md:flex-row lg:col-span-1">
           {images.length > 1 && (

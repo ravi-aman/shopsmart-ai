@@ -71,20 +71,20 @@ export function BudgetAssistant() {
         <Wallet className="size-4 text-ai" aria-hidden /> Check against my budget
       </h2>
       <form
-        className="mt-2 flex gap-2"
+        className="mt-2 grid grid-cols-[4.5rem_minmax(0,1fr)] gap-2"
         onSubmit={(e) => {
           e.preventDefault()
           if (Number(budget) > 0) assist.mutate()
         }}
       >
-        <select value={currency} onChange={(e) => setCurrency(e.target.value as 'USD' | 'INR')} aria-label="Currency" className={cn(inputClass, 'w-20 px-2')}>
+        <select value={currency} onChange={(e) => setCurrency(e.target.value as 'USD' | 'INR')} aria-label="Currency" className={cn(inputClass, 'px-2')}>
           <option value="INR">₹</option>
           <option value="USD">$</option>
         </select>
-        <input type="number" min={1} inputMode="decimal" value={budget} onChange={(e) => setBudget(e.target.value)} placeholder={currency === 'INR' ? '1,50,000' : '1,800'} aria-label="Budget" className={cn(inputClass, 'min-w-0 flex-1')} />
-        <button type="submit" disabled={assist.isPending || !(Number(budget) > 0)} className={cn(buttonStyles.secondary, 'px-3')}>
+        <input type="number" min={1} inputMode="decimal" value={budget} onChange={(e) => setBudget(e.target.value)} placeholder={currency === 'INR' ? '1,50,000' : '1,800'} aria-label="Budget" className={cn(inputClass, 'min-w-0')} />
+        <button type="submit" disabled={assist.isPending || !(Number(budget) > 0)} className={cn(buttonStyles.secondary, 'col-span-2 py-2')}>
           {assist.isPending ? <Spinner /> : <Sparkles className="size-4 text-ai" aria-hidden />}
-          Check
+          Check my cart
         </button>
       </form>
       {assist.isError && <p className="mt-2 text-xs text-stock-out">{assist.error.message}</p>}

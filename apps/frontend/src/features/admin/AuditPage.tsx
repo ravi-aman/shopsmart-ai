@@ -21,7 +21,7 @@ interface AuditRow {
   createdAt: string
 }
 
-const agents = ['ALL', 'SHOPPING', 'KNOWLEDGE', 'ORDER', 'OPS']
+const agents = ['ALL', 'SHOPPING', 'KNOWLEDGE', 'ORDER', 'CHECKOUT', 'PREMIUM', 'OPS']
 
 /** Every AI decision with its inputs, tool steps, sources and output — the "auditable" requirement. */
 export function AuditPage() {

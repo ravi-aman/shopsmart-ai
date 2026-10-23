@@ -117,7 +117,7 @@ function OrdersChart({ data }: { data: Kpis['ordersByDay'] }) {
       <p className="text-sm font-semibold">Orders, last 14 days</p>
       <div className="mt-4 flex h-32 items-end gap-1.5" role="img" aria-label="Bar chart of orders per day">
         {data.map((d) => (
-          <div key={d.day} className="group flex flex-1 flex-col items-center gap-1">
+          <div key={d.day} className="group flex h-full flex-1 flex-col items-center justify-end gap-1">
             <span className="text-[10px] tabular-nums text-ink-subtle opacity-0 group-hover:opacity-100">{d.orders}</span>
             <div
               className="w-full rounded-t bg-ink/80 group-hover:bg-accent"

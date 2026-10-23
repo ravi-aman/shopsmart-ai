@@ -51,9 +51,9 @@ export function ProductImage({ src, name, brand, specs, className, size = 'card'
   if (specs.type === 'Book') {
     const [bg, fg] = bookPalettes[hash(name) % bookPalettes.length]
     return (
-      <div className={cn('grid place-items-center bg-[#f3f2ee] p-[10%]', className)} role="img" aria-label={name}>
+      <div className={cn('grid place-items-center overflow-hidden bg-[#f3f2ee] p-[10%]', className)} role="img" aria-label={name}>
         <div
-          className="flex aspect-[2/3] h-full max-h-full flex-col justify-between rounded-[3px] p-[8%] shadow-[4px_6px_14px_rgba(0,0,0,0.18)]"
+          className="flex aspect-[2/3] h-full max-h-full min-h-0 flex-col overflow-hidden justify-between rounded-[3px] p-[8%] shadow-[4px_6px_14px_rgba(0,0,0,0.18)]"
           style={{ background: bg, color: fg }}
         >
           <span

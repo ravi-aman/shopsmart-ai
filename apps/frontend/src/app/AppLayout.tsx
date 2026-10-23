@@ -46,7 +46,7 @@ export function AppLayout() {
                 to={user ? '/account' : '/login'}
                 icon={<User className="size-5" aria-hidden />}
                 label={user ? user.name.split(' ')[0] : 'Sign in'}
-                sub={user ? `${user.membershipTier.toLowerCase()} member` : undefined}
+                sub={user ? (user.role === 'PARTNER' ? 'partner account' : `${user.membershipTier.toLowerCase()} member`) : undefined}
               />
               {user && (user.role === 'ADMIN' || user.role === 'OPS') && (
                 <HeaderLink to="/admin" icon={<LayoutDashboard className="size-5" aria-hidden />} label="Console" />

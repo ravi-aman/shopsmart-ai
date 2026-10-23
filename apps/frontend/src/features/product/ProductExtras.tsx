@@ -77,7 +77,7 @@ export function PremiumTools({ detail }: { detail: ProductDetail }) {
       </h2>
       {!premium ? (
         <p className="mt-1 text-sm text-ink-muted">
-          {hasChart ? 'Size advice and' : ''} “complete the set” bundles are part of Premium.{' '}
+          {hasChart ? 'Size advice and “complete the set” bundles are' : '“Complete the set” bundles are'} part of Premium.{' '}
           {user ? 'Upgrade your membership to use them.' : <Link to="/login" className="font-medium text-accent hover:underline">Sign in</Link>}
         </p>
       ) : (
