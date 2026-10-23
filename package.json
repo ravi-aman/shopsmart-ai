@@ -1,0 +1,20 @@
+{
+  "name": "shopsmart-ai",
+  "private": true,
+  "description": "ShopSmart AI monorepo: React 19 + Vite frontend, Spring Boot 3 + Spring AI backend, Supabase Postgres + pgvector, NVIDIA models",
+  "scripts": {
+    "setup": "npm --prefix apps/frontend install",
+    "dev": "concurrently -n api,web -c yellow,cyan \"npm:dev:backend\" \"npm:dev:frontend\"",
+    "dev:frontend": "npm --prefix apps/frontend run dev",
+    "dev:backend": "node scripts/mvnw.mjs spring-boot:run",
+    "dev:backend:docker": "docker compose -f infra/docker-compose.yml up --build backend",
+    "build": "npm run build:frontend && npm run build:backend",
+    "build:frontend": "npm --prefix apps/frontend run build",
+    "build:backend": "node scripts/mvnw.mjs -q -DskipTests package",
+    "build:backend:docker": "docker build -t shopsmart-backend apps/backend",
+    "db:local": "docker compose -f infra/docker-compose.yml --profile local-db up -d postgres"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

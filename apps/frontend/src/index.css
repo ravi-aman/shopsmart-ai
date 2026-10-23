@@ -1,0 +1,46 @@
+@import 'tailwindcss';
+
+/*
+ * ShopSmart design tokens.
+ * Commerce-first: neutral surfaces, one accent, status colours reserved for stock states.
+ */
+@theme {
+  --font-sans: 'Inter Tight', ui-sans-serif, system-ui, sans-serif;
+
+  --color-canvas: #f7f7f5;
+  --color-surface: #ffffff;
+  --color-ink: #131313;
+  --color-ink-muted: #5c5c58;
+  --color-ink-subtle: #8a8a85;
+  --color-line: #e6e5e1;
+  --color-line-strong: #d3d2cd;
+
+  --color-accent: #e8590c;
+  --color-accent-hover: #cf4f0a;
+  --color-accent-soft: #fdeee4;
+
+  --color-header: #141414;
+
+  --color-stock-in: #1f7a3d;
+  --color-stock-low: #b25e09;
+  --color-stock-out: #c92a2a;
+
+  --color-ai: #3b3bd1;
+  --color-ai-soft: #ececfd;
+
+  --radius-card: 10px;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    @apply bg-canvas text-ink font-sans;
+    font-feature-settings: 'tnum' 1, 'cv11' 1;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}

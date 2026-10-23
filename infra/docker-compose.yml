@@ -1,0 +1,25 @@
+# Default setup uses Supabase (DB_* in ../.env).
+# `--profile local-db` adds an offline Postgres + pgvector for development without internet.
+name: shopsmart
+
+services:
+  backend:
+    build: ../apps/backend
+    env_file: ../.env
+    ports:
+      - "8080:8080"
+
+  postgres:
+    profiles: ["local-db"]
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_DB: shopsmart
+      POSTGRES_USER: shopsmart
+      POSTGRES_PASSWORD: shopsmart
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
