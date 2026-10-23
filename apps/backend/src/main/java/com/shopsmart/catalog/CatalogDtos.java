@@ -55,7 +55,12 @@ public final class CatalogDtos {
             List<String> tags,
             List<Breadcrumb> breadcrumbs,
             List<WarehouseStock> stockByWarehouse,
-            List<ProductSummary> related) {
+            List<ProductSummary> related,
+            Promotion promotion) {
+    }
+
+    /** An active percent-off promotion, applied automatically at checkout. */
+    public record Promotion(String code, String description, BigDecimal percent, java.time.OffsetDateTime endsAt) {
     }
 
     public record FacetValue(String value, String label, long count) {

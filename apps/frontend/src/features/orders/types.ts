@@ -26,6 +26,8 @@ export interface Address {
 
 export interface Quote {
   subtotal: number
+  discount: number
+  promotionCodes: string[]
   shippingFee: number
   total: number
   shippingExplanation: string
@@ -68,6 +70,7 @@ export interface OrderDetail {
   id: string
   status: OrderStatus
   subtotal: number
+  discount: number
   shippingFee: number
   total: number
   currency: string

@@ -117,6 +117,12 @@ export function CheckoutPage() {
                   <dt className="text-ink-muted">Items</dt>
                   <dd>{formatPrice(quote.data.subtotal)}</dd>
                 </div>
+                {quote.data.discount > 0 && (
+                  <div className="flex justify-between text-stock-in">
+                    <dt>Promotions ({quote.data.promotionCodes.join(', ')})</dt>
+                    <dd>−{formatPrice(quote.data.discount)}</dd>
+                  </div>
+                )}
                 <div className="flex justify-between">
                   <dt className="text-ink-muted">Delivery</dt>
                   <dd className={quote.data.shippingFee === 0 ? 'font-medium text-stock-in' : ''}>

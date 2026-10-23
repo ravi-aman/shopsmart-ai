@@ -166,6 +166,7 @@ export function OrderDetailPage() {
           )}
           <dl className="space-y-1 border-t border-line pt-3">
             <div className="flex justify-between"><dt className="text-ink-muted">Items</dt><dd>{formatPrice(o.subtotal)}</dd></div>
+            {o.discount > 0 && <div className="flex justify-between text-stock-in"><dt>Promotions</dt><dd>−{formatPrice(o.discount)}</dd></div>}
             <div className="flex justify-between"><dt className="text-ink-muted">Delivery</dt><dd>{o.shippingFee === 0 ? 'FREE' : formatPrice(o.shippingFee)}</dd></div>
             <div className="flex justify-between font-semibold"><dt>Total</dt><dd>{formatPrice(o.total)}</dd></div>
           </dl>

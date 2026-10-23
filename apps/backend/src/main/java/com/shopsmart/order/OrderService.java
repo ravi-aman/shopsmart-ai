@@ -61,8 +61,11 @@ public class OrderService {
         List<Line> lines = cartLines(user.id());
         Warehouse wh = chooseWarehouse(lines, region);
         BigDecimal subtotal = lines.stream().map(l -> l.price().multiply(BigDecimal.valueOf(l.quantity()))).reduce(BigDecimal.ZERO, BigDecimal::add);
-        var fee = OrderRules.shippingFee(user.tier(), subtotal);
-        return new Quote(subtotal, fee.amount(), subtotal.add(fee.amount()), fee.explanation(), policy(fee.source()), wh.id(), wh.city(),
+        Discount discount = discount(lines);
+        BigDecimal afterDiscount = subtotal.subtract(discount.amount());
+        var fee = OrderRules.shippingFee(user.tier(), afterDiscount);
+        return new Quote(subtotal, discount.amount(), discount.codes(), fee.amount(), afterDiscount.add(fee.amount()), fee.explanation(),
+                policy(fee.source()), wh.id(), wh.city(),
                 OrderRules.promisedDate(LocalDate.now(ZoneOffset.UTC), region, wh.region()), !region.equals(wh.region()),
                 lines.stream().mapToInt(Line::quantity).sum());
     }
@@ -83,17 +86,19 @@ public class OrderService {
             movement(l.productId(), wh.id(), -l.quantity(), "SALE");
         }
         BigDecimal subtotal = lines.stream().map(l -> l.price().multiply(BigDecimal.valueOf(l.quantity()))).reduce(BigDecimal.ZERO, BigDecimal::add);
-        var fee = OrderRules.shippingFee(user.tier(), subtotal);
+        Discount discount = discount(lines);
+        BigDecimal afterDiscount = subtotal.subtract(discount.amount());
+        var fee = OrderRules.shippingFee(user.tier(), afterDiscount);
         LocalDate promised = OrderRules.promisedDate(LocalDate.now(ZoneOffset.UTC), address.region(), wh.region());
 
         long n = jdbc.sql("select nextval('order_number_seq')").query(Long.class).single();
         String orderId = "ORD-" + n;
         jdbc.sql("""
-                        insert into orders (id, user_id, status, subtotal, shipping_fee, total, shipping_address, warehouse_id, promised_date)
-                        values (:id, :u, 'PLACED', :sub, :fee, :total, cast(:addr as jsonb), :wh, :promised)
+                        insert into orders (id, user_id, status, subtotal, discount, shipping_fee, total, shipping_address, warehouse_id, promised_date)
+                        values (:id, :u, 'PLACED', :sub, :disc, :fee, :total, cast(:addr as jsonb), :wh, :promised)
                         """)
-                .param("id", orderId).param("u", user.id()).param("sub", subtotal).param("fee", fee.amount())
-                .param("total", subtotal.add(fee.amount())).param("addr", json.write(address)).param("wh", wh.id())
+                .param("id", orderId).param("u", user.id()).param("sub", subtotal).param("disc", discount.amount()).param("fee", fee.amount())
+                .param("total", afterDiscount.add(fee.amount())).param("addr", json.write(address)).param("wh", wh.id())
                 .param("promised", promised).update();
         for (Line l : lines) {
             jdbc.sql("insert into order_items (order_id, product_id, quantity, unit_price) values (:o, :p, :q, :price)")
@@ -107,6 +112,30 @@ public class OrderService {
         event(shipmentId, "PLACED", wh.city(), "Order confirmed");
         jdbc.sql("delete from cart_items where cart_id = (select id from carts where user_id = :u)").param("u", user.id()).update();
         return detail(orderId, user);
+    }
+
+    record Discount(BigDecimal amount, List<String> codes) {
+    }
+
+    /** Active percent-off promotions (approved in the ops console) apply automatically. */
+    private Discount discount(List<Line> lines) {
+        BigDecimal total = BigDecimal.ZERO;
+        List<String> codes = new ArrayList<>();
+        for (Line l : lines) {
+            var promo = jdbc.sql("""
+                            select code, value from promotions where product_id = :p and status = 'ACTIVE' and type = 'PERCENT'
+                              and now() between starts_at and ends_at order by value desc limit 1
+                            """)
+                    .param("p", l.productId())
+                    .query((rs, n) -> Map.entry(rs.getString(1), rs.getBigDecimal(2)))
+                    .optional();
+            if (promo.isPresent()) {
+                total = total.add(l.price().multiply(BigDecimal.valueOf(l.quantity())).multiply(promo.get().getValue())
+                        .divide(BigDecimal.valueOf(100), 2, java.math.RoundingMode.HALF_UP));
+                codes.add(promo.get().getKey());
+            }
+        }
+        return new Discount(total, codes);
     }
 
     private List<Line> cartLines(UUID userId) {
@@ -163,18 +192,18 @@ public class OrderService {
     }
 
     public OrderDetail detail(String orderId, CurrentUser user) {
-        record Row(String id, UUID userId, String status, BigDecimal subtotal, BigDecimal fee, BigDecimal total, String currency,
+        record Row(String id, UUID userId, String status, BigDecimal subtotal, BigDecimal discount, BigDecimal fee, BigDecimal total, String currency,
                    String address, String warehouseId, String warehouseCity, LocalDate promised, OffsetDateTime created, OffsetDateTime delivered) {
         }
         Row o = jdbc.sql("""
-                        select o.id, o.user_id, o.status, o.subtotal, o.shipping_fee, o.total, o.currency, o.shipping_address::text,
+                        select o.id, o.user_id, o.status, o.subtotal, o.discount, o.shipping_fee, o.total, o.currency, o.shipping_address::text,
                                o.warehouse_id, w.city, o.promised_date, o.created_at, o.delivered_at
                         from orders o left join warehouses w on w.id = o.warehouse_id where o.id = upper(:id)
                         """)
                 .param("id", orderId)
                 .query((rs, n) -> new Row(rs.getString(1), rs.getObject(2, UUID.class), rs.getString(3), rs.getBigDecimal(4), rs.getBigDecimal(5),
-                        rs.getBigDecimal(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10),
-                        rs.getObject(11, LocalDate.class), rs.getObject(12, OffsetDateTime.class), rs.getObject(13, OffsetDateTime.class)))
+                        rs.getBigDecimal(6), rs.getBigDecimal(7), rs.getString(8), rs.getString(9), rs.getString(10), rs.getString(11),
+                        rs.getObject(12, LocalDate.class), rs.getObject(13, OffsetDateTime.class), rs.getObject(14, OffsetDateTime.class)))
                 .optional()
                 .filter(r -> user == null || "ADMIN".equals(user.role()) || "OPS".equals(user.role()) || r.userId().equals(user.id()))
                 .orElseThrow(() -> new NotFoundException("Order " + orderId + " not found"));
@@ -208,7 +237,7 @@ public class OrderService {
                     case "CANCELLED" -> "This order is already cancelled.";
                     default -> "Delivered orders can't be cancelled — request a return instead.";
                 };
-        return new OrderDetail(o.id(), o.status(), o.subtotal(), o.fee(), o.total(), o.currency(), json.read(o.address(), Address.class),
+        return new OrderDetail(o.id(), o.status(), o.subtotal(), o.discount(), o.fee(), o.total(), o.currency(), json.read(o.address(), Address.class),
                 o.warehouseId(), o.warehouseCity(), o.promised(), o.created(), o.delivered(), items, shipment,
                 new CancelInfo(canCancel, cancelReason, policy(cancelRef)));
     }

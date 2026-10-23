@@ -197,6 +197,11 @@ function BuyBox({ detail }: { detail: ProductDetail }) {
   return (
     <aside className="h-fit rounded-card border border-line bg-surface p-5 lg:sticky lg:top-32">
       <Price price={p.price} mrp={p.mrp} currency={p.currency} />
+      {detail.promotion && (
+        <p className="mt-2 rounded-md bg-accent-soft px-2.5 py-1.5 text-xs font-semibold text-accent">
+          Extra {detail.promotion.percent}% off at checkout · {detail.promotion.code}
+        </p>
+      )}
       <StockBadge availability={p.availability} className="mt-2 block text-sm" />
 
       {!outOfStock && (

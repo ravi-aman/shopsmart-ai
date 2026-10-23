@@ -36,6 +36,8 @@ public final class OrderDtos {
 
     public record Quote(
             BigDecimal subtotal,
+            BigDecimal discount,
+            List<String> promotionCodes,
             BigDecimal shippingFee,
             BigDecimal total,
             String shippingExplanation,
@@ -72,6 +74,7 @@ public final class OrderDtos {
             String id,
             String status,
             BigDecimal subtotal,
+            BigDecimal discount,
             BigDecimal shippingFee,
             BigDecimal total,
             String currency,

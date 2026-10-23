@@ -1,8 +1,12 @@
-import { createBrowserRouter, Navigate } from 'react-router'
+import { createBrowserRouter } from 'react-router'
 import { AppLayout } from '@/app/AppLayout'
 import { AccountPage } from '@/features/account/AccountPage'
 import { AdminLayout } from '@/features/admin/AdminLayout'
+import { AdminOrdersPage } from '@/features/admin/AdminOrdersPage'
+import { AuditPage } from '@/features/admin/AuditPage'
+import { InventoryPage } from '@/features/admin/InventoryPage'
 import { KnowledgePage } from '@/features/admin/KnowledgePage'
+import { OverviewPage } from '@/features/admin/OverviewPage'
 import { LoginPage, RegisterPage, RequireAuth } from '@/features/auth/AuthPages'
 import { CartPage } from '@/features/cart/CartPage'
 import { ListingPage } from '@/features/catalog/ListingPage'
@@ -36,8 +40,11 @@ export const router = createBrowserRouter([
         path: 'admin',
         element: <AdminLayout />,
         children: [
-          { index: true, element: <Navigate to="knowledge" replace /> },
+          { index: true, element: <OverviewPage /> },
+          { path: 'orders', element: <AdminOrdersPage /> },
+          { path: 'inventory', element: <InventoryPage /> },
           { path: 'knowledge', element: <KnowledgePage /> },
+          { path: 'audit', element: <AuditPage /> },
         ],
       },
       { path: 'status', element: <StatusPage /> },

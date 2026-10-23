@@ -61,6 +61,7 @@ export interface ProductDetail {
   breadcrumbs: { slug: string; name: string }[]
   stockByWarehouse: { warehouseId: string; city: string; region: string; available: number }[]
   related: ProductSummary[]
+  promotion: { code: string; description: string; percent: number; endsAt: string } | null
 }
 
 export interface Suggestion {

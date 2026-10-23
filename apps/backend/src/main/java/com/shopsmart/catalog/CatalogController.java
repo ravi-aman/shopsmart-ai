@@ -79,7 +79,8 @@ public class CatalogController {
                 row.tags(),
                 catalog.breadcrumbs(row.categoryPath()),
                 catalog.stockByWarehouse(p.id()),
-                catalog.related(p.id(), row.categoryId(), p.price(), 8));
+                catalog.related(p.id(), row.categoryId(), p.price(), 8),
+                catalog.activePromotion(p.id()).orElse(null));
     }
 
     /** Summaries for a set of ids (guest cart, recently viewed). Unknown ids are skipped. */

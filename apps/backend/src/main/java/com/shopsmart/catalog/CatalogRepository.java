@@ -198,6 +198,18 @@ public class CatalogRepository {
                 .list();
     }
 
+    public Optional<CatalogDtos.Promotion> activePromotion(String productId) {
+        return jdbc.sql("""
+                        select code, description, value, ends_at from promotions
+                        where product_id = :p and status = 'ACTIVE' and type = 'PERCENT' and now() between starts_at and ends_at
+                        order by value desc limit 1
+                        """)
+                .param("p", productId)
+                .query((rs, n) -> new CatalogDtos.Promotion(rs.getString(1), rs.getString(2), rs.getBigDecimal(3),
+                        rs.getObject(4, java.time.OffsetDateTime.class)))
+                .optional();
+    }
+
     public List<WarehouseStock> stockByWarehouse(String productId) {
         return jdbc.sql("""
                         select w.id, w.city, w.region, greatest(i.on_hand - i.reserved, 0)

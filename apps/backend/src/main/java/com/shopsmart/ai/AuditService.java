@@ -107,6 +107,11 @@ public class AuditService {
                 .optional();
     }
 
+    /** A human approved the action this AI decision proposed. */
+    public void markApproved(UUID auditId) {
+        jdbc.sql("update ai_audit_log set human_approved = true where id = :id").param("id", auditId).update();
+    }
+
     public void feedback(UUID auditId, UUID userId, int rating, String comment) {
         jdbc.sql("""
                         insert into ai_feedback (audit_id, user_id, rating, comment) values (:a, :u, :r, :c)

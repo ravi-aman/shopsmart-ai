@@ -1,10 +1,16 @@
-import { BookOpen } from 'lucide-react'
+import { BookOpen, ClipboardList, LayoutDashboard, ScrollText, Warehouse } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Navigate, NavLink, Outlet, useLocation } from 'react-router'
 import { useAuth } from '@/features/auth/authStore'
 import { cn } from '@/lib/cn'
 
-const links = [{ to: '/admin/knowledge', label: 'Knowledge base', icon: BookOpen }] as { to: string; label: string; icon: typeof BookOpen; end?: boolean }[]
+const links = [
+  { to: '/admin', label: 'Overview', icon: LayoutDashboard, end: true },
+  { to: '/admin/orders', label: 'Orders', icon: ClipboardList },
+  { to: '/admin/inventory', label: 'Inventory', icon: Warehouse },
+  { to: '/admin/knowledge', label: 'Knowledge base', icon: BookOpen },
+  { to: '/admin/audit', label: 'AI audit log', icon: ScrollText },
+]
 
 /** Back-office shell (Shopify Polaris–style left nav). Only ADMIN and OPS accounts get in. */
 export function AdminLayout() {
