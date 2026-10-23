@@ -8,13 +8,17 @@
     "dev:api": "npm --prefix apps/api run dev",
     "dev:frontend": "npm --prefix apps/frontend run dev",
     "db:local": "docker compose -f infra/docker-compose.yml up -d mongo",
-    "start": "docker compose -f infra/docker-compose.yml up --build",
-    "build": "npm --prefix apps/api run build && npm --prefix apps/frontend run build",
+    "start": "npm --prefix apps/api start",
+    "build": "npm --prefix apps/api ci --include=dev && npm --prefix apps/frontend ci --include=dev && npm --prefix apps/api run build && npm --prefix apps/frontend run build",
     "test": "npm --prefix apps/api test",
     "typecheck": "npm --prefix apps/api run typecheck && npm --prefix apps/frontend exec tsc -- -p tsconfig.app.json --noEmit",
-    "eval:rag": "node scripts/eval/rag-eval.mjs"
+    "eval:rag": "node scripts/eval/rag-eval.mjs",
+    "docker:up": "docker compose -f infra/docker-compose.yml up --build"
   },
   "devDependencies": {
     "concurrently": "^9.2.1"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }
