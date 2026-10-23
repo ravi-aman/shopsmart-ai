@@ -86,6 +86,14 @@ Seed documents live in `apps/backend/src/main/resources/seed/knowledge/` (`manif
 
 Pipeline: parse (PDF headings/outline, Markdown headings, JSON sections) → section-aware chunks with a context header → NVIDIA embeddings (`passage`) → hybrid retrieval (full-text + pgvector, RRF, category boost, lexical rerank) over active, in-force versions → grounded answer from numbered excerpts (NVIDIA agent model; extractive quote when offline) → citations validated, numbers checked against sources → confidence computed from evidence; LOW means "not found" + `followUpRequired: true`.
 
+## Orders and the order agent
+
+- `POST /api/orders/quote` `{"region": "IN-SOUTH"}` → subtotal, delivery fee (by membership tier, cited from the Shipping Policy), fulfilment centre and promised date.
+- `POST /api/orders/checkout` `{"address": {...}}` → reserves stock and creates the order + shipment (payment is simulated).
+- `GET /api/orders`, `GET /api/orders/{id}`, `POST /api/orders/{id}/cancel`, `POST /api/orders/{id}/returns` `{"productId", "reason"}` — each decision carries the policy document/section/version it applied.
+- Delivery simulator moves orders PLACED → PACKED → SHIPPED → OUT_FOR_DELIVERY → DELIVERED (`SIMULATOR_STEP_SECONDS`, default 180; some shipments get a hub delay). Admin: `POST /api/admin/orders/{id}/advance`.
+- Order agent (via `/api/ai/assistant/stream`): "Where is my order?", "Can I cancel my order?", "I want to return it". Uses Spring AI `@Tool` methods (`getOrderStatus`, `checkCancellation`, `checkReturn`, `lookupPolicy`, `listMyOrders`); proposes actions that the shopper confirms in the UI.
+
 ## Offline database (optional)
 
 ```bash

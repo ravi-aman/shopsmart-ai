@@ -123,10 +123,10 @@ export function CartPage() {
             <span>Subtotal</span>
             <span>{formatPrice(cart.subtotal)}</span>
           </div>
-          <button type="button" disabled className={`${buttonStyles.primary} mt-4 w-full`} title="Checkout arrives with order simulation (Phase 4)">
+          <Link to={token ? '/checkout' : '/login?next=/checkout'} className={`${buttonStyles.primary} mt-4 w-full`}>
             Proceed to checkout
-          </button>
-          <p className="mt-2 text-center text-xs text-ink-subtle">Checkout opens in the orders phase of this build.</p>
+          </Link>
+          <p className="mt-2 text-center text-xs text-ink-subtle">Delivery fee and date are shown at checkout.</p>
         </aside>
       </div>
     </div>

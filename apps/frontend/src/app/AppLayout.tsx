@@ -1,4 +1,4 @@
-import { Heart, Home, LayoutDashboard, LayoutGrid, MapPin, ShoppingCart, Sparkles, User } from 'lucide-react'
+import { Heart, Home, LayoutDashboard, LayoutGrid, MapPin, Package, ShoppingCart, Sparkles, User } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Link, NavLink, Outlet, ScrollRestoration, useLocation } from 'react-router'
 import { departments } from '@/app/categories'
@@ -49,6 +49,7 @@ export function AppLayout() {
               {user && user.role !== 'CUSTOMER' && (
                 <HeaderLink to="/admin" icon={<LayoutDashboard className="size-5" aria-hidden />} label="Console" />
               )}
+              {user && <HeaderLink to="/orders" icon={<Package className="size-5" aria-hidden />} label="Orders" />}
               <HeaderLink to="/wishlist" icon={<Heart className="size-5" aria-hidden />} label="Wishlist" />
               <HeaderLink
                 to="/cart"

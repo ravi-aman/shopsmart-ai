@@ -20,6 +20,7 @@ import { StockBadge } from '@/components/Bits'
 import { ProductImage } from '@/components/ProductImage'
 import { type Turn, useAssistant } from '@/features/assistant/assistantStore'
 import { KnowledgeResult } from '@/features/assistant/KnowledgeResult'
+import { OrderResult } from '@/features/assistant/OrderResult'
 import type { Decision, RecommendResponse, Recommendation } from '@/features/assistant/types'
 import { useAuth } from '@/features/auth/authStore'
 import { useCart } from '@/features/cart/useCart'
@@ -33,6 +34,7 @@ export const examplePrompts = [
   'Can I return an opened laptop?',
   'Does Prime membership include free delivery?',
   'What is the refund timeline?',
+  'Where is my order?',
 ]
 
 const useCaseLabel: Record<string, string> = {
@@ -206,6 +208,12 @@ function TurnView({ turn, onAsk }: { turn: Turn; onAsk: (q: string) => void }) {
         </p>
       )}
       {turn.result?.agent === 'SHOPPING' && <ResultView result={turn.result.data} steps={turn.steps} onAsk={onAsk} />}
+      {turn.result?.agent === 'ORDER' && (
+        <>
+          <OrderResult result={turn.result.data} />
+          {turn.result.data.auditId && <DecisionFooter auditId={turn.result.data.auditId} />}
+        </>
+      )}
       {turn.result?.agent === 'KNOWLEDGE' && (
         <>
           <KnowledgeResult result={turn.result.data} />
@@ -492,7 +500,7 @@ function DecisionFooter({ auditId }: { auditId: string }) {
                 <dd>{trace.data.latencyMs} ms</dd>
                 <dt className="text-ink-subtle">Retrieved</dt>
                 <dd>
-                  {trace.data.retrievedIds.length} {trace.data.agent === 'KNOWLEDGE' ? 'policy sections' : 'products'} considered
+                  {trace.data.retrievedIds.length} {trace.data.agent === 'KNOWLEDGE' ? 'policy sections' : trace.data.agent === 'ORDER' ? 'orders' : 'products'} considered
                 </dd>
               </dl>
               <ol className="mt-2 space-y-1 border-t border-line pt-2">

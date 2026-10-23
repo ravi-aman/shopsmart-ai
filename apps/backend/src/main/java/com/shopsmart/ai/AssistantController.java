@@ -6,6 +6,7 @@ import java.util.Map;
 import com.shopsmart.ai.shopping.ShoppingAssistantService;
 import com.shopsmart.common.BusinessException;
 import com.shopsmart.knowledge.KnowledgeAnswerService;
+import com.shopsmart.order.agent.OrderAgentService;
 import com.shopsmart.security.CurrentUser;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -33,11 +34,13 @@ public class AssistantController {
     private final AssistantRouter router;
     private final ShoppingAssistantService shopping;
     private final KnowledgeAnswerService knowledge;
+    private final OrderAgentService orderAgent;
     private final RateLimiter rateLimiter;
 
     public AssistantController(AssistantRouter router, ShoppingAssistantService shopping, KnowledgeAnswerService knowledge,
-                               RateLimiter rateLimiter) {
+                               OrderAgentService orderAgent, RateLimiter rateLimiter) {
         this.router = router;
+        this.orderAgent = orderAgent;
         this.shopping = shopping;
         this.knowledge = knowledge;
         this.rateLimiter = rateLimiter;
@@ -64,6 +67,7 @@ public class AssistantController {
                             step -> send(emitter, "step", step));
                     case KNOWLEDGE -> knowledge.answer(message, req.productId(), req.conversationId(), user,
                             step -> send(emitter, "step", step));
+                    case ORDER -> orderAgent.answer(message, user, req.conversationId(), step -> send(emitter, "step", step));
                 };
                 send(emitter, "result", Map.of("agent", agent.name(), "data", result));
             } catch (BusinessException e) {

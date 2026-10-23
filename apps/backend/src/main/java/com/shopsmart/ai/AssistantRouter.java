@@ -3,17 +3,18 @@ package com.shopsmart.ai;
 import java.util.Locale;
 import java.util.Set;
 
+import com.shopsmart.order.agent.OrderAgentService;
 import org.springframework.stereotype.Component;
 
 /**
- * Decides which agent handles a message. Deterministic on purpose: routing must be instant and
+ * Decides which agent handles a message: the shopper's own orders go to the order agent first. Deterministic on purpose: routing must be instant and
  * auditable. Policy vocabulary sends a message to the knowledge agent unless it is clearly a buying
  * request ("suggest", "under $…", "best").
  */
 @Component
 public class AssistantRouter {
 
-    public enum Agent { SHOPPING, KNOWLEDGE }
+    public enum Agent { SHOPPING, KNOWLEDGE, ORDER }
 
     private static final Set<String> POLICY = Set.of(
             "return", "returns", "returnable", "returned", "refund", "refunds", "warranty", "guarantee", "cancel", "cancellation",
@@ -26,6 +27,7 @@ public class AssistantRouter {
             "below", "compare", "options", "show", "find", "gift", "top");
 
     public Agent route(String message, boolean hasProductContext) {
+        if (!hasProductContext && OrderAgentService.looksLikeOrderQuestion(message)) return Agent.ORDER;
         String q = message.toLowerCase(Locale.ROOT);
         int policy = 0;
         int shopping = 0;

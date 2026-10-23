@@ -1,3 +1,5 @@
+import type { OrderAgentResponse } from '@/features/assistant/OrderResult'
+
 import type { Availability } from '@/lib/types'
 
 export interface Criterion {
@@ -75,11 +77,12 @@ export interface KnowledgeAnswer {
   aiAssisted: boolean
 }
 
-export type AgentName = 'SHOPPING' | 'KNOWLEDGE'
+export type AgentName = 'SHOPPING' | 'KNOWLEDGE' | 'ORDER'
 
 export type AssistantResult =
   | { agent: 'SHOPPING'; data: RecommendResponse }
   | { agent: 'KNOWLEDGE'; data: KnowledgeAnswer }
+  | { agent: 'ORDER'; data: OrderAgentResponse }
 
 export interface SourceSection {
   chunkId: string

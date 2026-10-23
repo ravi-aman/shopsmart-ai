@@ -12,6 +12,8 @@ import { ProductPage } from '@/features/product/ProductPage'
 import { NotFoundPage } from '@/features/system/NotFoundPage'
 import { StatusPage } from '@/features/system/StatusPage'
 import { WishlistPage } from '@/features/wishlist/WishlistPage'
+import { CheckoutPage } from '@/features/orders/CheckoutPage'
+import { OrderDetailPage, OrdersPage } from '@/features/orders/OrdersPages'
 
 export const router = createBrowserRouter([
   {
@@ -23,6 +25,9 @@ export const router = createBrowserRouter([
       { path: 'p/:slug', element: <ProductPage /> },
       { path: 'compare', element: <ComparePage /> },
       { path: 'cart', element: <CartPage /> },
+      { path: 'checkout', element: <CheckoutPage /> },
+      { path: 'orders', element: <RequireAuth><OrdersPage /></RequireAuth> },
+      { path: 'orders/:id', element: <RequireAuth><OrderDetailPage /></RequireAuth> },
       { path: 'login', element: <LoginPage /> },
       { path: 'register', element: <RegisterPage /> },
       { path: 'wishlist', element: <RequireAuth><WishlistPage /></RequireAuth> },

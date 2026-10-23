@@ -34,6 +34,14 @@ public class Json {
         return json == null ? null : read(json, new TypeReference<Object>() {});
     }
 
+    public <T> T read(String json, Class<T> type) {
+        try {
+            return json == null ? null : mapper.readValue(json, type);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Invalid JSON in database column", e);
+        }
+    }
+
     public String write(Object value) {
         try {
             return mapper.writeValueAsString(value);
