@@ -14,6 +14,10 @@ spring:
   threads:
     virtual:
       enabled: true
+  http:
+    client:
+      connect-timeout: 10s
+      read-timeout: ${AI_READ_TIMEOUT:60s}
   servlet:
     multipart:
       max-file-size: 20MB
@@ -53,6 +57,14 @@ spring:
           temperature: 0.2
           # NVIDIA API rejects requests without an explicit max token count.
           max-tokens: ${NVIDIA_MAX_TOKENS:2048}
+    # Fail fast: the assistant has a deterministic fallback, so long retry chains only add latency.
+    retry:
+      max-attempts: 2
+      on-client-errors: false
+      backoff:
+        initial-interval: 1s
+        multiplier: 2
+        max-interval: 4s
     vectorstore:
       pgvector:
         initialize-schema: false   # Flyway owns the vector_store table
@@ -64,6 +76,7 @@ spring:
 shopsmart:
   ai:
     fast-model: ${NVIDIA_FAST_MODEL:nvidia/nemotron-3.5-lightning-30b-a3b}
+    agent-model: ${NVIDIA_AGENT_MODEL:nvidia/nemotron-3-super-120b-a12b}
     embedding:
       base-url: ${NVIDIA_BASE_URL:https://integrate.api.nvidia.com}
       api-key: ${NVIDIA_API_KEY:missing-key}

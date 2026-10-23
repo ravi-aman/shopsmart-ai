@@ -29,6 +29,11 @@ public class Json {
         return json == null ? List.of() : read(json, STRING_LIST);
     }
 
+    /** Generic parse (maps, lists, scalars); null-safe. */
+    public Object read(String json) {
+        return json == null ? null : read(json, new TypeReference<Object>() {});
+    }
+
     public String write(Object value) {
         try {
             return mapper.writeValueAsString(value);

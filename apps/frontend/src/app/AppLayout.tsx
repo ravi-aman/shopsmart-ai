@@ -2,6 +2,8 @@ import { Heart, Home, LayoutGrid, MapPin, ShoppingCart, Sparkles, User } from 'l
 import type { ReactNode } from 'react'
 import { Link, NavLink, Outlet, ScrollRestoration, useLocation } from 'react-router'
 import { departments } from '@/app/categories'
+import { AssistantDrawer } from '@/features/assistant/AssistantDrawer'
+import { useAssistant } from '@/features/assistant/assistantStore'
 import { SearchBox } from '@/app/SearchBox'
 import { useAuth } from '@/features/auth/authStore'
 import { useCart } from '@/features/cart/useCart'
@@ -13,6 +15,7 @@ export function AppLayout() {
   const user = useAuth((s) => s.user)
   const { itemCount } = useCart()
   const location = useLocation()
+  const setAssistantOpen = useAssistant((st) => st.setOpen)
 
   return (
     <div className="flex min-h-dvh flex-col">
@@ -66,13 +69,11 @@ export function AppLayout() {
           <div className="mx-auto flex h-11 max-w-7xl items-center gap-1 overflow-x-auto px-4 text-sm">
             <button
               type="button"
-              disabled
-              title="The AI assistant arrives in the next build phase"
-              className="mr-2 inline-flex shrink-0 items-center gap-1.5 rounded-full bg-ai-soft px-3 py-1 font-medium text-ai disabled:cursor-default"
+              onClick={() => setAssistantOpen(true)}
+              className="mr-2 inline-flex shrink-0 items-center gap-1.5 rounded-full bg-ai-soft px-3 py-1 font-medium text-ai hover:bg-ai hover:text-white"
             >
               <Sparkles className="size-4" aria-hidden />
               Ask ShopSmart AI
-              <span className="rounded bg-ai/10 px-1 text-[10px] uppercase">soon</span>
             </button>
             {departments.map((d) => (
               <NavLink
@@ -106,11 +107,20 @@ export function AppLayout() {
       </footer>
 
       <CompareTray />
+      <AssistantDrawer />
 
       {/* mobile bottom navigation */}
-      <nav className="fixed inset-x-0 bottom-0 z-20 grid grid-cols-4 border-t border-line bg-surface md:hidden" aria-label="Primary">
+      <nav className="fixed inset-x-0 bottom-0 z-20 grid grid-cols-5 border-t border-line bg-surface md:hidden" aria-label="Primary">
         <BottomLink to="/" icon={<Home className="size-5" />} label="Home" end />
         <BottomLink to="/c/electronics" icon={<LayoutGrid className="size-5" />} label="Shop" />
+        <button
+          type="button"
+          onClick={() => setAssistantOpen(true)}
+          className="flex flex-col items-center gap-0.5 py-2 text-[11px] font-semibold text-ai"
+        >
+          <Sparkles className="size-5" />
+          Ask AI
+        </button>
         <BottomLink
           to="/cart"
           icon={

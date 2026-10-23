@@ -66,6 +66,15 @@ Both at once (needs JDK 21): `npm run dev`.
 
 Flyway creates the schema on first backend start.
 
+## AI shopping assistant (Module 1)
+
+- `POST /api/ai/shopping/recommend` `{"query": "Suggest a laptop under $1000 for Java development and AI projects"}` → the brief's JSON contract (`interpretedRequirement`, `budget`, `recommendations[]`, `clarifyingQuestion`) plus score breakdown and `auditId`.
+- `POST /api/ai/shopping/stream` → same pipeline as server-sent events (`step` … `result`).
+- `GET /api/ai/decisions/{auditId}` → full decision trace; `POST /api/ai/decisions/{auditId}/feedback` `{"rating": 1}`.
+- `POST /api/ai/admin/embed-products` (admin/ops) → embeds products missing vectors (also runs automatically on startup when `NVIDIA_API_KEY` is set).
+
+Pipeline: NVIDIA fast model extracts intent (rule parser as fallback) → SQL hard filters + hybrid keyword/vector ranking (RRF) → deterministic spec scoring → NVIDIA agent model writes explanations, rejected if they cite numbers not in the product data → everything logged to `ai_audit_log`.
+
 ## Offline database (optional)
 
 ```bash

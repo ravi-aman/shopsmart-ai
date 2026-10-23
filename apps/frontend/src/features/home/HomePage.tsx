@@ -3,13 +3,14 @@ import { ArrowRight, Sparkles } from 'lucide-react'
 import { Link } from 'react-router'
 import { departments } from '@/app/categories'
 import { ProductCard, ProductCardSkeleton } from '@/components/ProductCard'
+import { useAssistant } from '@/features/assistant/assistantStore'
 import { api } from '@/lib/api'
 import type { SearchResponse } from '@/lib/types'
 
 const assistantPrompts = [
   'Suggest a laptop under $1000 for Java development and AI projects',
-  'Can I return an opened laptop?',
-  'Does Prime membership include free delivery?',
+  'Noise cancelling headphones for travel under $300',
+  'A gaming laptop with an RTX GPU under $1200',
 ]
 
 const rails = [
@@ -19,6 +20,8 @@ const rails = [
 ]
 
 export function HomePage() {
+  const ask = useAssistant((s) => s.ask)
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
       <section className="grid gap-6 rounded-card border border-line bg-surface p-6 md:grid-cols-[1.4fr_1fr] md:p-10">
@@ -30,15 +33,22 @@ export function HomePage() {
             Get products that fit — and why.
           </h1>
           <p className="mt-3 max-w-prose text-ink-muted">
-            Recommendations explain the specs behind every pick. Policy answers cite the exact document, section and
-            version they came from.
+            Recommendations explain the specs behind every pick, with a score breakdown you can check. Every answer is
+            logged for review.
           </p>
         </div>
-        <ul className="flex flex-col gap-2 self-center" aria-label="Example assistant questions (coming in the next phase)">
+        <ul className="flex flex-col gap-2 self-center">
           {assistantPrompts.map((prompt) => (
-            <li key={prompt} className="flex items-start gap-2 rounded-lg border border-line px-3 py-2.5 text-sm text-ink-muted">
-              <Sparkles className="mt-0.5 size-4 shrink-0 text-ai" aria-hidden />
-              <span className="flex-1">{prompt}</span>
+            <li key={prompt}>
+              <button
+                type="button"
+                onClick={() => ask(prompt)}
+                className="group flex w-full items-start gap-2 rounded-lg border border-line px-3 py-2.5 text-left text-sm hover:border-ai hover:bg-ai-soft"
+              >
+                <Sparkles className="mt-0.5 size-4 shrink-0 text-ai" aria-hidden />
+                <span className="flex-1">{prompt}</span>
+                <ArrowRight className="mt-0.5 size-4 shrink-0 text-ink-subtle group-hover:text-ai" aria-hidden />
+              </button>
             </li>
           ))}
         </ul>

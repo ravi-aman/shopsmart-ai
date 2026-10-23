@@ -48,7 +48,7 @@ public class CatalogRepository {
             coalesce(s.available, 0) as available
             """;
 
-    static final String PRODUCT_FROM = """
+    public static final String PRODUCT_FROM = """
             from products p
             join categories c on c.id = p.category_id
             join brands b on b.id = p.brand_id
