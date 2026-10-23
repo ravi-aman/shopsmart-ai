@@ -29,7 +29,8 @@ public class KnowledgeRetriever {
             "can", "could", "would", "will", "the", "a", "an", "is", "are", "am", "do", "does", "did", "i", "my", "me", "you", "your",
             "we", "our", "it", "its", "this", "that", "of", "for", "to", "in", "on", "at", "with", "what", "whats", "when", "how",
             "which", "who", "why", "there", "be", "if", "about", "any", "get", "have", "has", "and", "or", "please",
-            "tell", "shopsmart", "product", "item");
+            "tell", "shopsmart", "product", "item", "should", "much", "many", "long", "need", "want", "like", "just",
+            "also", "still", "know", "way", "possible", "allowed");
 
     /** Question words → policy categories (boost only, never a filter). */
     private static final Map<String, List<String>> CATEGORY_HINTS = new HashMap<>();
@@ -156,6 +157,20 @@ public class KnowledgeRetriever {
             Map.entry("phone", "smartphones"), Map.entry("mobile", "smartphones"), Map.entry("fridge", "refrigerators"),
             Map.entry("ac", "air conditioners"), Map.entry("headphones", "audio"), Map.entry("earbuds", "audio"),
             Map.entry("money", "refund"), Map.entry("ship", "shipping"), Map.entry("deliver", "delivery"));
+
+    /** Content words exactly as the shopper wrote them (no synonym expansion). */
+    public static List<String> rawTerms(String text) {
+        List<String> out = new ArrayList<>();
+        for (String w : text.toLowerCase(Locale.ROOT).split("[^a-z0-9]+")) {
+            if (w.length() >= 2 && !STOP.contains(w) && !out.contains(w)) out.add(w);
+        }
+        return out;
+    }
+
+    public static List<String> synonymsOf(String word) {
+        String syn = SYNONYMS.get(word);
+        return syn == null ? List.of() : List.of(syn.split(" "));
+    }
 
     public static List<String> contentTerms(String text) {
         Set<String> words = new LinkedHashSet<>();

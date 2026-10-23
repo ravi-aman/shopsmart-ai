@@ -1,13 +1,27 @@
-# Default setup uses Supabase (DB_* in ../.env).
-# `--profile local-db` adds an offline Postgres + pgvector for development without internet.
+# Whole stack: `docker compose -f infra/docker-compose.yml up --build` → http://localhost:3000
+# Uses Supabase from ../.env by default. Add `--profile local-db` for an offline Postgres + pgvector
+# (then set DB_URL=jdbc:postgresql://postgres:5432/shopsmart, DB_USERNAME/DB_PASSWORD=shopsmart in .env).
 name: shopsmart
 
 services:
   backend:
     build: ../apps/backend
     env_file: ../.env
+    environment:
+      KNOWLEDGE_STORAGE_DIR: /data/knowledge
+    volumes:
+      - knowledge:/data/knowledge
     ports:
       - "8080:8080"
+    restart: unless-stopped
+
+  frontend:
+    build: ../apps/frontend
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+    restart: unless-stopped
 
   postgres:
     profiles: ["local-db"]
@@ -23,3 +37,4 @@ services:
 
 volumes:
   pgdata:
+  knowledge:

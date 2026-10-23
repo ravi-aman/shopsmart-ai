@@ -307,6 +307,7 @@ public class KnowledgeAnswerService {
      */
     static String confidence(String question, List<KnowledgeRetriever.Hit> hits, List<KnowledgeRetriever.Hit> context, Generated g) {
         if (g.answer == null || !g.answerable) return "LOW";
+        if (!"LLM".equals(g.mode) && mostlyUnknown(question, hits)) return "LOW";
         StringBuilder cited = new StringBuilder();
         g.cited.forEach(i -> cited.append(' ').append(context.get(i).content()));
         double coverage = coverage(KnowledgeRetriever.contentTerms(question), cited.toString());
@@ -319,6 +320,25 @@ public class KnowledgeAnswerService {
         if (score >= 0.68) return "HIGH";
         if (score >= 0.45) return "MEDIUM";
         return "LOW";
+    }
+
+    /**
+     * Out-of-domain guard for quoted answers: if more than half of the question's longer words appear
+     * in none of the retrieved sections ("Can I pay with bitcoin?"), the policies don't cover it.
+     */
+    static boolean mostlyUnknown(String question, List<KnowledgeRetriever.Hit> hits) {
+        StringBuilder all = new StringBuilder();
+        hits.forEach(h -> all.append(' ').append(h.content().toLowerCase(Locale.ROOT)));
+        String text = all.toString();
+        int counted = 0;
+        int missing = 0;
+        for (String term : KnowledgeRetriever.rawTerms(question)) {
+            if (term.length() < 4 || term.chars().allMatch(Character::isDigit)) continue;
+            counted++;
+            boolean found = text.contains(stem(term)) || KnowledgeRetriever.synonymsOf(term).stream().anyMatch(syn -> text.contains(stem(syn)));
+            if (!found) missing++;
+        }
+        return counted > 0 && missing * 2 > counted;
     }
 
     static double coverage(List<String> terms, String text) {
