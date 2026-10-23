@@ -165,7 +165,7 @@ export async function extractIntent(text: string): Promise<Extraction> {
   try {
     const cats = await categories()
     const { object, usage } = await chatObject(
-      models.fast(),
+      models.agent(), // the fast model degenerates under schema-guided decoding
       llmSchema,
       `Shopper message:\n<<<${text}>>>`,
       `You extract structured shopping requirements for the ShopSmart marketplace.
@@ -179,11 +179,11 @@ Rules:
 - Only set minRamGb, minStorageGb, needsDedicatedGpu, preferredOs or brands if the shopper states them.
 - clarifyingQuestion: one short question ONLY when the product type is unknown; otherwise null.`,
     )
-    return { intent: sanitize(object, ruled, cats, await brands()), source: 'LLM', model: config.NVIDIA_FAST_MODEL, ...usage, error: null }
+    return { intent: sanitize(object, ruled, cats, await brands()), source: 'LLM', model: config.NVIDIA_AGENT_MODEL, ...usage, error: null }
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e)
-    console.warn(`[shopping] intent extraction via ${config.NVIDIA_FAST_MODEL} failed, using rules: ${msg}`)
-    return { intent: ruled, source: 'RULES', model: config.NVIDIA_FAST_MODEL, promptTokens: null, completionTokens: null, error: msg }
+    console.warn(`[shopping] intent extraction via ${config.NVIDIA_AGENT_MODEL} failed, using rules: ${msg}`)
+    return { intent: ruled, source: 'RULES', model: config.NVIDIA_AGENT_MODEL, promptTokens: null, completionTokens: null, error: msg }
   }
 }
 

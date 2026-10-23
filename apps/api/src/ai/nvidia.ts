@@ -11,6 +11,8 @@ const nvidia = createOpenAICompatible({
   name: 'nvidia',
   baseURL: `${config.NVIDIA_BASE_URL.replace(/\/$/, '')}/v1`,
   apiKey: config.NVIDIA_API_KEY,
+  // sends the zod schema as response_format json_schema; without it the model invents its own fields
+  supportsStructuredOutputs: true,
 })
 
 export const models = {
